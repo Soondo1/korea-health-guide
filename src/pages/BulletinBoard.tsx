@@ -108,7 +108,7 @@ export default function BulletinBoard() {
         </CardHeader>
         <CardContent>
           <div className="bg-lavender-50 p-3 rounded-md">
-            <ScrollArea className="h-12 w-full overflow-hidden" orientation="horizontal">
+            <ScrollArea className="h-12 w-full overflow-hidden">
               <div className="flex gap-8 whitespace-nowrap px-1 animate-[scroll_30s_linear_infinite]">
                 {newsItems.concat(newsItems).map((item, index) => (
                   <div key={index} className="flex items-center">
