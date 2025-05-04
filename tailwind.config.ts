@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,6 +53,32 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				kare: {
+					'50': '#f0f5ff',
+					'100': '#e5eeff',
+					'200': '#cddfff',
+					'300': '#a6c4ff',
+					'400': '#799fff', 
+					'500': '#4b74ff',
+					'600': '#2c4ff9',
+					'700': '#2038e5',
+					'800': '#1d2eb8',
+					'900': '#1d2e92',
+					'950': '#141c54',
+				},
+				lavender: {
+					'50': '#f8f6fe',
+					'100': '#f1edfc',
+					'200': '#e6dcfa',
+					'300': '#d3c0f5',
+					'400': '#bb9aee',
+					'500': '#a673e5',
+					'600': '#9351d5',
+					'700': '#7d3dbb',
+					'800': '#683499',
+					'900': '#562d7d',
+					'950': '#371b53',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -89,7 +116,11 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+			},
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				serif: ['Playfair Display', 'serif'],
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
