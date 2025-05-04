@@ -1,6 +1,5 @@
 
 import { Link } from "react-router-dom";
-import { Search, Plus, User, Bell } from "lucide-react";
 
 export default function Navbar() {
   return (
@@ -30,17 +29,9 @@ export default function Navbar() {
           </li>
         </ul>
 
-        {/* Right side: Icons (removed search and sign-in) */}
-        <div className="flex items-center space-x-4">
-          <button aria-label="Add Content" className="p-1.5 rounded-full hover:bg-gray-100">
-            <Plus className="h-5 w-5 text-gray-600" />
-          </button>
-          <button aria-label="Profile" className="p-1.5 rounded-full hover:bg-gray-100">
-            <User className="h-5 w-5 text-gray-600" />
-          </button>
-          <button aria-label="Notifications" className="p-1.5 rounded-full hover:bg-gray-100">
-            <Bell className="h-5 w-5 text-gray-600" />
-          </button>
+        {/* Right side is now empty - all icons removed */}
+        <div className="flex items-center">
+          {/* Intentionally left empty */}
         </div>
       </nav>
     </header>
