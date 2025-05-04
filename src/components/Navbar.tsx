@@ -27,6 +27,11 @@ export default function Navbar() {
               Blog
             </Link>
           </li>
+          <li>
+            <Link to="/bulletin" className="hover:text-kare-600 transition-colors">
+              Bulletin
+            </Link>
+          </li>
         </ul>
 
         {/* Right side is now empty - all icons removed */}
