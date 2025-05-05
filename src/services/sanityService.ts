@@ -1,90 +1,120 @@
+import { client } from '@/lib/sanity';
+import { NewsItem, Category, CategoryItem, Post, BulletinPost } from '@/lib/sanity';
 
-import { NewsItem, Category } from '@/lib/sanity';
-
-// Mock news items
-const mockNewsItems: NewsItem[] = [
-  {
-    _id: '1',
-    title: 'New Medical Translation Service Launched'
-  },
-  {
-    _id: '2',
-    title: 'Free Vaccination Days in Seoul'
-  },
-  {
-    _id: '3',
-    title: 'Top Hospitals Accepting Foreigners'
-  },
-  {
-    _id: '4',
-    title: 'Updated Health Insurance Guidelines for Expatriates'
-  },
-  {
-    _id: '5',
-    title: 'Mental Health Resources for International Residents'
+// Helper function for error handling
+const handleSanityError = (error: any, context: string) => {
+  console.error(`Error in ${context}:`, error);
+  // Check if it's a network error
+  if (error.message && error.message.includes('network')) {
+    throw new Error('Network error. Please check your internet connection and try again.');
   }
-];
-
-// Mock categories with items
-const mockCategories: Category[] = [
-  {
-    _id: 'cat1',
-    name: 'Hospital Guide',
-    icon: 'hospital',
-    description: 'Find information about hospitals and medical centers in Korea',
-    items: [
-      { _id: 'item1', title: 'International Hospitals Directory' },
-      { _id: 'item2', title: 'Hospital Appointment Guide' }
-    ]
-  },
-  {
-    _id: 'cat2',
-    name: 'Insurance',
-    icon: 'shield',
-    description: 'Everything you need to know about health insurance in Korea',
-    items: [
-      { _id: 'item3', title: 'National Health Insurance System' },
-      { _id: 'item4', title: 'Private Insurance Options' }
-    ]
-  },
-  {
-    _id: 'cat3',
-    name: 'Medical Terms',
-    icon: 'book',
-    description: 'Common medical terms in Korean and English',
-    items: [
-      { _id: 'item5', title: 'Medical Vocabulary Guide' },
-      { _id: 'item6', title: 'Symptom Translation Chart' }
-    ]
-  },
-  {
-    _id: 'cat4',
-    name: 'Health Checkups',
-    icon: 'fileText',
-    description: 'Information about health checkups and screenings',
-    items: [
-      { _id: 'item7', title: 'Annual Checkup Guide' },
-      { _id: 'item8', title: 'Specialized Screening Programs' }
-    ]
-  },
-  {
-    _id: 'cat5',
-    name: 'Appointments',
-    icon: 'calendar',
-    description: 'How to book and manage medical appointments',
-    items: [
-      { _id: 'item9', title: 'Booking System Guide' },
-      { _id: 'item10', title: 'Interpreter Services' }
-    ]
+  // Check if it's an API error
+  if (error.statusCode) {
+    throw new Error(`Sanity API error (${error.statusCode}): ${error.message || 'Unknown error'}`);
   }
-];
+  // Generic error
+  throw new Error(`Failed to fetch data: ${error.message || 'Unknown error'}`);
+};
 
+// Fetch news items from Sanity
 export async function fetchNewsItems(): Promise<NewsItem[]> {
-  // Return mock data instead of fetching from Sanity
-  return Promise.resolve(mockNewsItems);
+  try {
+    return await client.fetch(`
+      *[_type == "newsItem"] | order(publishedAt desc) {
+        _id,
+        title,
+        publishedAt
+      }
+    `);
+  } catch (error) {
+    return handleSanityError(error, 'fetchNewsItems');
+  }
 }
 
+// Fetch bulletin board categories with their items
 export async function fetchCategories(): Promise<Category[]> {
-  // Return mock data instead of fetching from Sanity
-  return Promise.resolve(mockCategories);
+  try {
+    // First, fetch all categories
+    const categories = await client.fetch(`
+      *[_type == "bulletinCategory"] {
+        _id,
+        name,
+        description,
+        icon
+      }
+    `);
+    
+    // For each category, fetch its items
+    const categoriesWithItems = await Promise.all(
+      categories.map(async (category: any) => {
+        try {
+          const items = await client.fetch(`
+            *[_type == "bulletinItem" && category._ref == $categoryId] {
+              _id,
+              title,
+              description,
+              tags
+            }
+          `, { categoryId: category._id });
+          
+          return {
+            ...category,
+            items
+          };
+        } catch (error) {
+          console.error(`Error fetching items for category ${category.name}:`, error);
+          return {
+            ...category,
+            items: [] // Return empty items if there's an error
+          };
+        }
+      })
+    );
+    
+    return categoriesWithItems;
+  } catch (error) {
+    return handleSanityError(error, 'fetchCategories');
+  }
+}
+
+// Fetch blog posts
+export async function fetchPosts(): Promise<Post[]> {
+  try {
+    return await client.fetch(`
+      *[_type == "post"] | order(publishedAt desc) {
+        _id,
+        title,
+        slug,
+        mainImage,
+        publishedAt,
+        summary,
+        "readingTime": round(length(pt::text(body)) / 1500) + " min read",
+        "categories": categories[]->{ name }
+      }
+    `);
+  } catch (error) {
+    return handleSanityError(error, 'fetchPosts');
+  }
+}
+
+// Fetch a single blog post by slug
+export async function fetchPostBySlug(slug: string): Promise<Post | null> {
+  try {
+    const posts = await client.fetch(`
+      *[_type == "post" && slug.current == $slug] {
+        _id,
+        title,
+        slug,
+        mainImage,
+        publishedAt,
+        body,
+        "author": author->{ name, image },
+        "categories": categories[]->{ name }
+      }
+    `, { slug });
+    
+    return posts.length > 0 ? posts[0] : null;
+  } catch (error) {
+    return handleSanityError(error, 'fetchPostBySlug');
+  }
 }

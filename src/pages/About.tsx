@@ -1,5 +1,6 @@
-
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { Instagram, Linkedin, Mail } from "lucide-react";
 
 const About = () => {
   return (
@@ -58,6 +59,41 @@ const About = () => {
               <li>Mobile app for on-the-go access to healthcare information</li>
             </ul>
             
+            <h2 className="text-2xl font-semibold text-kare-700 mt-8 mb-4">Connect With Us</h2>
+            <p>
+              We'd love to hear from you! Reach out to us through our social media channels:
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 mt-6 items-start">
+              <a 
+                href="https://www.instagram.com/karekoreahealth/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center py-2 px-4 bg-lavender-50 rounded-md text-kare-700 hover:bg-lavender-100 transition-colors"
+              >
+                <Instagram className="mr-2" size={20} />
+                <span>Follow us on Instagram</span>
+              </a>
+              
+              <a 
+                href="https://www.linkedin.com/company/k-are/posts/?feedView=all" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center py-2 px-4 bg-lavender-50 rounded-md text-kare-700 hover:bg-lavender-100 transition-colors"
+              >
+                <Linkedin className="mr-2" size={20} />
+                <span>Connect on LinkedIn</span>
+              </a>
+              
+              <a 
+                href="mailto:contact@k-are.org" 
+                className="flex items-center py-2 px-4 bg-lavender-50 rounded-md text-kare-700 hover:bg-lavender-100 transition-colors"
+              >
+                <Mail className="mr-2" size={20} />
+                <span>Email Us</span>
+              </a>
+            </div>
+            
             <p className="mt-8">
               Thank you for being a part of K-are. We welcome your feedback and contributions to make this 
               resource more valuable for everyone.
@@ -66,15 +102,7 @@ const About = () => {
         </div>
       </main>
       
-      <footer className="bg-gray-50 border-t mt-16 py-8 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center">
-            <p className="text-sm text-gray-400">
-              © {new Date().getFullYear()} K-are. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

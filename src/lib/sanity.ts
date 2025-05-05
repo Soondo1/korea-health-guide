@@ -1,3 +1,5 @@
+import { createClient } from '@sanity/client';
+import imageUrlBuilder from '@sanity/image-url';
 
 // This file contains types and mock functions that were previously using Sanity
 
@@ -5,11 +7,14 @@
 export interface NewsItem {
   _id: string;
   title: string;
+  publishedAt?: string;
 }
 
 export interface CategoryItem {
   _id: string;
   title: string;
+  description?: string;
+  tags?: string[];
 }
 
 export interface Category {
@@ -20,29 +25,47 @@ export interface Category {
   items: CategoryItem[];
 }
 
-// Mock client for backward compatibility
-export const client = {
-  fetch: async () => {
-    console.warn('Sanity client has been removed');
-    return [];
-  }
-};
-
-// Mock image URL builder function
-export function urlFor(source: any) {
-  console.warn('Sanity image URL builder has been removed');
-  return {
-    url: () => '',
-    width: () => ({ height: () => ({ url: () => '' }) }),
-    height: () => ({ width: () => ({ url: () => '' }) }),
-    format: () => ({ url: () => '' }),
-    quality: () => ({ url: () => '' }),
-    fit: () => ({ url: () => '' }),
-    crop: () => ({ url: () => '' }),
-    auto: () => ({ url: () => '' }),
-    dpr: () => ({ url: () => '' }),
-    sharpen: () => ({ url: () => '' }),
-    orientation: () => ({ url: () => '' }),
-    image: () => ({})
+export interface Post {
+  _id: string;
+  title: string;
+  slug: {
+    current: string;
   };
+  mainImage?: any;
+  publishedAt: string;
+  body: any;
+  author?: {
+    name: string;
+    image?: any;
+  };
+  categories?: Array<{
+    name: string;
+  }>;
+  summary?: string;
+  readingTime?: string;
+}
+
+export interface BulletinPost {
+  _id: string;
+  title: string;
+  category: {
+    _id: string;
+    name: string;
+  };
+  publishedAt: string;
+}
+
+// Set up Sanity client
+export const client = createClient({
+  projectId: '4zq6kq5m', // You'll need to replace with your Sanity project ID
+  dataset: 'k-are1',
+  useCdn: true,
+  apiVersion: '2024-04-01', // use the latest API version
+});
+
+// Set up image URL builder
+const builder = imageUrlBuilder(client);
+
+export function urlFor(source: any) {
+  return builder.image(source);
 }
