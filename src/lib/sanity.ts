@@ -1,23 +1,7 @@
 
-import { createClient } from '@sanity/client';
-import imageUrlBuilder from '@sanity/image-url';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+// This file contains types and mock functions that were previously using Sanity
 
-export const client = createClient({
-  projectId: 'your-project-id', // Replace with your Sanity project ID
-  dataset: 'production', // Replace with your dataset name
-  useCdn: true, // Set to false when in development
-  apiVersion: '2023-05-03', // Use the latest API version
-});
-
-// Set up the image URL builder
-const builder = imageUrlBuilder(client);
-
-export function urlFor(source: SanityImageSource) {
-  return builder.image(source);
-}
-
-// Types for Sanity Content
+// Types for Content
 export interface NewsItem {
   _id: string;
   title: string;
@@ -34,4 +18,31 @@ export interface Category {
   icon: string;
   description: string;
   items: CategoryItem[];
+}
+
+// Mock client for backward compatibility
+export const client = {
+  fetch: async () => {
+    console.warn('Sanity client has been removed');
+    return [];
+  }
+};
+
+// Mock image URL builder function
+export function urlFor(source: any) {
+  console.warn('Sanity image URL builder has been removed');
+  return {
+    url: () => '',
+    width: () => ({ height: () => ({ url: () => '' }) }),
+    height: () => ({ width: () => ({ url: () => '' }) }),
+    format: () => ({ url: () => '' }),
+    quality: () => ({ url: () => '' }),
+    fit: () => ({ url: () => '' }),
+    crop: () => ({ url: () => '' }),
+    auto: () => ({ url: () => '' }),
+    dpr: () => ({ url: () => '' }),
+    sharpen: () => ({ url: () => '' }),
+    orientation: () => ({ url: () => '' }),
+    image: () => ({})
+  };
 }
