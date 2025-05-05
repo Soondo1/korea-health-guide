@@ -5,6 +5,7 @@ import RecentNews from "../components/RecentNews";
 import WelcomeSection from "../components/WelcomeSection";
 import Footer from "../components/Footer";
 import QuickHelp from "../components/QuickHelp";
+import GuideSection from "../components/GuideSection";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
@@ -27,6 +28,11 @@ const Index = () => {
         {/* Welcome Section */}
         <WelcomeSection />
         
+        {/* Guide Section */}
+        <div className="my-12">
+          <GuideSection />
+        </div>
+        
         {/* Call to Action Section */}
         <div className="my-12 bg-gradient-to-r from-kare-50 to-lavender-50 rounded-xl p-8 shadow-sm">
           <div className="max-w-4xl mx-auto text-center">
@@ -39,10 +45,10 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
-                to="/bulletin-board" 
+                to="/guide" 
                 className="inline-flex items-center justify-center px-6 py-3 bg-kare-600 text-white rounded-md hover:bg-kare-700 transition-colors"
               >
-                Browse Resources
+                Browse Guide
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
               <Link 

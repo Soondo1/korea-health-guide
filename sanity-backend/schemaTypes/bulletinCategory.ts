@@ -10,6 +10,15 @@ export default defineType({
       title: 'Name',
       type: 'string',
       validation: (Rule) => Rule.required(),
+      options: {
+        list: [
+          {title: 'Daily Life Support', value: 'Daily Life Support'},
+          {title: 'Policy News', value: 'Policy News'},
+          {title: 'Experience Activities', value: 'Experience Activities'},
+          {title: 'Benefits', value: 'Benefits'},
+          {title: 'Announcements', value: 'Announcements'},
+        ],
+      },
     }),
     defineField({
       name: 'description',

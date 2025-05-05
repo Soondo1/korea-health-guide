@@ -61,7 +61,7 @@ const Articles = () => {
     // Filter by category
     if (selectedCategory !== "all") {
       result = result.filter(post => 
-        post.categories && post.categories.some(cat => cat.toLowerCase() === selectedCategory)
+        post.categories && post.categories.some(cat => cat.name.toLowerCase() === selectedCategory)
       );
     }
 
@@ -228,7 +228,7 @@ const Articles = () => {
                             key={idx} 
                             className="inline-block bg-lavender-50 text-kare-700 px-2.5 py-0.5 rounded-full text-xs"
                           >
-                            {category}
+                            {category.name}
                           </span>
                         ))}
                       </div>

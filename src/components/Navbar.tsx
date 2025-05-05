@@ -17,6 +17,11 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
+            <Link to="/guide" className="hover:text-kare-600 transition-colors">
+              Guide
+            </Link>
+          </li>
+          <li>
             <Link to="/about" className="hover:text-kare-600 transition-colors">
               About
             </Link>
@@ -40,7 +45,7 @@ export default function Navbar() {
 
         {/* Mobile menu button - could be implemented further */}
         <div className="md:hidden">
-          <button className="p-2 text-gray-600 hover:text-kare-600">
+          <button className="p-2 text-gray-600 hover:text-kare-600" aria-label="Open menu">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
