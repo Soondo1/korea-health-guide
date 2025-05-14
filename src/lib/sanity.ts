@@ -1,5 +1,25 @@
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { TypedObject } from '@portabletext/types';
+
+// Helper function for error handling
+const handleSanityError = (error: unknown, context: string) => {
+  if (error instanceof Error) {
+    console.error(`Error in ${context}:`, error);
+    // Check if it's a network error
+    if (error.message && error.message.includes('network')) {
+      throw new Error('Network error. Please check your internet connection and try again.');
+    }
+    // Check if it's an API error
+    if ('statusCode' in error) {
+      throw new Error(`Sanity API error (${error.statusCode}): ${error.message || 'Unknown error'}`);
+    }
+    // Generic error
+    throw new Error(`Failed to fetch data: ${error.message || 'Unknown error'}`);
+  }
+  throw new Error(`Failed to fetch data: Unknown error type`);
+};
 
 // This file contains types and mock functions that were previously using Sanity
 
@@ -25,18 +45,28 @@ export interface Category {
   items: CategoryItem[];
 }
 
+export interface ImageType {
+  _type: string;
+  asset: {
+    _ref: string;
+    _type: string;
+  };
+  alt?: string;
+  caption?: string;
+}
+
 export interface Post {
   _id: string;
   title: string;
   slug: {
     current: string;
   };
-  mainImage?: any;
+  mainImage?: ImageType;
   publishedAt: string;
-  body: any;
+  body: TypedObject | TypedObject[];
   author?: {
     name: string;
-    image?: any;
+    image?: ImageType;
   };
   categories?: Array<{
     name: string;
@@ -66,6 +96,6 @@ export const client = createClient({
 // Set up image URL builder
 const builder = imageUrlBuilder(client);
 
-export function urlFor(source: any) {
-  return builder.image(source);
+export function urlFor(source: unknown) {
+  return builder.image(source as SanityImageSource);
 }

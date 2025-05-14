@@ -17,11 +17,6 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link to="/guide" className="hover:text-kare-600 transition-colors">
-              Guide
-            </Link>
-          </li>
-          <li>
             <Link to="/about" className="hover:text-kare-600 transition-colors">
               About
             </Link>

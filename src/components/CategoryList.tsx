@@ -7,20 +7,8 @@ interface CategoryListProps {
 }
 
 const CategoryList: React.FC<CategoryListProps> = ({ categories, activeSort }) => {
-  // Filter to include only the categories mentioned in the image
-  const targetCategories = [
-    "Daily Life Support",
-    "Policy News",
-    "Experience Activities",
-    "Benefits",
-    "Announcements"
-  ];
-  
-  const filteredCategories = categories.filter(cat => 
-    targetCategories.includes(cat.name)
-  );
-  
-  if (filteredCategories.length === 0) {
+  // No need to filter here since we're now filtering in the parent component
+  if (categories.length === 0) {
     return (
       <div className="text-center py-6 text-gray-500">
         No categories available
@@ -31,10 +19,10 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, activeSort }) =
   // Simple implementation showing all categories in one list
   return (
     <div className="bg-white border border-gray-200 rounded">
-      {filteredCategories.map((category, index) => (
+      {categories.map((category, index) => (
         <div 
           key={category._id} 
-          className={`p-3 ${index !== filteredCategories.length - 1 ? 'border-b border-gray-200' : ''}`}
+          className={`p-3 ${index !== categories.length - 1 ? 'border-b border-gray-200' : ''}`}
         >
           <h3 className="font-medium text-gray-800 mb-2">{category.name}</h3>
           

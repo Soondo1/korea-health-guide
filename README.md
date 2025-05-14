@@ -71,3 +71,36 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+# Korea Health Guide
+
+A web application providing health information and resources for foreigners in Korea.
+
+## Features
+
+- Articles about healthcare in Korea
+- Comprehensive guide to navigating the Korean healthcare system
+- Directory of hospitals and pharmacies with English-speaking staff
+- Interactive map of healthcare facilities
+- Bulletin board for community discussions
+- Contact form for inquiries
+
+## Map Attribution
+
+The map feature in the Healthcare Facilities section uses NAVER Maps and includes proper attribution as required by NAVER's terms of service:
+- Map data is attributed to NAVER Corporation with copyright notice
+- Links to NAVER's Terms of Service are provided
+- The facility location data is sourced from the Korea Health Guide database
+
+## Recent Updates
+
+- Integrated NAVER Maps for location services
+- Combined the Guide and Healthcare Facilities pages for improved user experience
+- Added map sourcing and attribution for compliance with map service terms
+- Enhanced the directory with detailed facility information and individual location maps
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Run the development server with `npm run dev`

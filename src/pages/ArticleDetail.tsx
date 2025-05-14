@@ -3,10 +3,9 @@ import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { fetchPostBySlug } from "@/services/sanityService";
+import { fetchPostBySlug, portableTextComponents } from "@/services/sanityService";
 import { Post, urlFor } from "@/lib/sanity";
 import { PortableText } from '@portabletext/react';
-import portableTextComponents from "@/lib/portableTextComponents";
 
 const ArticleDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -16,16 +15,31 @@ const ArticleDetail = () => {
 
   useEffect(() => {
     const loadPost = async () => {
-      if (!slug) return;
+      if (!slug) {
+        console.error("No slug provided in URL parameters");
+        setError("Article not found. No slug provided.");
+        setLoading(false);
+        return;
+      }
+      
+      console.log(`Loading article with slug: ${slug}`);
       
       try {
         setLoading(true);
         const fetchedPost = await fetchPostBySlug(slug);
-        setPost(fetchedPost);
+        
+        if (!fetchedPost) {
+          console.error(`No post found with slug: ${slug}`);
+          setError(`Article not found for slug: ${slug}`);
+        } else {
+          console.log(`Successfully loaded article: ${fetchedPost.title}`);
+          setPost(fetchedPost);
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error("Error fetching post:", err);
-        setError("Failed to load article. Please try again later.");
+        setError(`Failed to load article. ${err instanceof Error ? err.message : 'Unknown error'}`);
         setLoading(false);
       }
     };

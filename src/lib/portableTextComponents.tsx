@@ -1,10 +1,18 @@
 import React from 'react';
 import { urlFor } from './sanity';
+import type { PortableTextBlockComponent, PortableTextMarkComponent, PortableTextTypeComponent } from '@portabletext/react';
+import { ImageType } from '@/lib/sanity';
+
+interface LinkType {
+  href: string;
+  blank?: boolean;
+  [key: string]: any;
+}
 
 // Define custom components for rendering Portable Text content
 const portableTextComponents = {
   types: {
-    image: ({ value }: any) => {
+    image: ({ value }: { value: ImageType }) => {
       if (!value?.asset?._ref) {
         return null;
       }
@@ -32,7 +40,7 @@ const portableTextComponents = {
     },
   },
   marks: {
-    link: ({ children, value }: any) => {
+    link: ({ children, value }: { children: React.ReactNode, value: LinkType }) => {
       const rel = !value.href.startsWith('/') ? 'noreferrer noopener' : undefined;
       return (
         <a 
@@ -45,37 +53,37 @@ const portableTextComponents = {
         </a>
       );
     },
-    highlight: ({ children }: any) => (
+    highlight: ({ children }: { children: React.ReactNode }) => (
       <span className="bg-yellow-100 px-1 rounded">{children}</span>
     ),
   },
   block: {
-    h1: ({ children }: any) => (
+    h1: ({ children }: { children: React.ReactNode }) => (
       <h1 className="text-3xl font-bold mt-8 mb-4 text-kare-800">{children}</h1>
     ),
-    h2: ({ children }: any) => (
+    h2: ({ children }: { children: React.ReactNode }) => (
       <h2 className="text-2xl font-bold mt-6 mb-3 text-kare-700">{children}</h2>
     ),
-    h3: ({ children }: any) => (
+    h3: ({ children }: { children: React.ReactNode }) => (
       <h3 className="text-xl font-bold mt-5 mb-2 text-kare-600">{children}</h3>
     ),
-    blockquote: ({ children }: any) => (
+    blockquote: ({ children }: { children: React.ReactNode }) => (
       <blockquote className="border-l-4 border-kare-300 pl-4 italic my-6 text-gray-700">
         {children}
       </blockquote>
     ),
   },
   list: {
-    bullet: ({ children }: any) => (
+    bullet: ({ children }: { children: React.ReactNode }) => (
       <ul className="list-disc pl-5 my-4 space-y-2">{children}</ul>
     ),
-    number: ({ children }: any) => (
+    number: ({ children }: { children: React.ReactNode }) => (
       <ol className="list-decimal pl-5 my-4 space-y-2">{children}</ol>
     ),
   },
   listItem: {
-    bullet: ({ children }: any) => <li>{children}</li>,
-    number: ({ children }: any) => <li>{children}</li>,
+    bullet: ({ children }: { children: React.ReactNode }) => <li>{children}</li>,
+    number: ({ children }: { children: React.ReactNode }) => <li>{children}</li>,
   },
 };
 

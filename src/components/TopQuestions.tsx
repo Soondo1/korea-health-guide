@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -23,34 +22,37 @@ const faqs = [
 ];
 
 export default function TopQuestions() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(0); // Default first question open
 
   const toggleQuestion = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <section className="bg-lavender-50 p-6 md:p-8 rounded-xl">
-      <h2 className="text-xl font-semibold mb-6 text-gray-800">Top Questions</h2>
-      <ul className="space-y-4">
+    <section className="bg-white border border-gray-100 shadow-sm p-5 md:p-6 rounded-xl">
+      <h2 className="text-xl font-semibold mb-4 text-kare-800 border-b border-gray-100 pb-2">Frequently Asked Questions</h2>
+      <ul className="space-y-3">
         {faqs.map((faq, index) => (
-          <li key={index} className="border-b border-lavender-100 pb-3">
+          <li key={index} className={`border border-gray-100 rounded-lg ${openIndex === index ? 'bg-lavender-50' : 'bg-white'}`}>
             <button 
-              className="flex justify-between items-center w-full text-left cursor-pointer group focus:outline-none"
+              type="button"
+              className="flex justify-between items-center w-full text-left cursor-pointer group p-3 focus:outline-none focus:ring-2 focus:ring-kare-200 rounded-lg"
               onClick={() => toggleQuestion(index)}
-              aria-expanded={openIndex === index}
+              aria-expanded={openIndex === index ? "true" : "false"}
             >
-              <span className="font-medium text-gray-900 group-hover:text-kare-700">
+              <span className={`font-medium ${openIndex === index ? 'text-kare-800' : 'text-gray-800'} group-hover:text-kare-700 text-sm sm:text-base`}>
                 {faq.question}
               </span>
-              {openIndex === index ? (
-                <ChevronUp className="h-5 w-5 text-kare-500 flex-shrink-0" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-400 group-hover:text-kare-500 flex-shrink-0" />
-              )}
+              <span className="ml-2 flex-shrink-0">
+                {openIndex === index ? (
+                  <ChevronUp className="h-5 w-5 text-kare-600 flex-shrink-0" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-400 group-hover:text-kare-500 flex-shrink-0" />
+                )}
+              </span>
             </button>
             {openIndex === index && (
-              <div className="mt-2 text-gray-700 pl-2 animate-accordion-down">
+              <div className="px-3 pb-3 text-gray-700 animate-accordion-down text-sm sm:text-base">
                 <p>{faq.answer}</p>
               </div>
             )}
