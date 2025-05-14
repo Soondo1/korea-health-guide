@@ -2,50 +2,49 @@ import React from 'react';
 import { Category } from '@/lib/sanity';
 
 interface CategoryListProps {
-  categories: Category[];
+  category: Category;
   activeSort: 'latest' | 'hottest';
 }
 
-const CategoryList: React.FC<CategoryListProps> = ({ categories, activeSort }) => {
-  // No need to filter here since we're now filtering in the parent component
-  if (categories.length === 0) {
+const CategoryList: React.FC<CategoryListProps> = ({ category, activeSort }) => {
+  if (!category || category.items.length === 0) {
     return (
-      <div className="text-center py-6 text-gray-500">
-        No categories available
+      <div className="text-center py-4 text-gray-500">
+        No items in this category
       </div>
     );
   }
   
-  // Simple implementation showing all categories in one list
+  // Sort by date (for latest) or by some popularity metric (for hottest)
+  const sortedItems = [...category.items].sort((a, b) => {
+    // This is a placeholder; in a real app you would have actual date/popularity metrics
+    if (activeSort === 'latest') {
+      // Sort by most recent (assuming items have timestamps)
+      return -1;
+    } else {
+      // Sort by popularity (assuming items have view counts or similar)
+      return 1;
+    }
+  });
+  
   return (
-    <div className="bg-white border border-gray-200 rounded">
-      {categories.map((category, index) => (
+    <div className="space-y-3">
+      {sortedItems.map(item => (
         <div 
-          key={category._id} 
-          className={`p-3 ${index !== categories.length - 1 ? 'border-b border-gray-200' : ''}`}
+          key={item._id}
+          className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
         >
-          <h3 className="font-medium text-gray-800 mb-2">{category.name}</h3>
+          <div className="flex justify-between items-start mb-1">
+            <h3 className="text-kare-800 font-medium">{item.title}</h3>
+            {item.tags && item.tags.length > 0 && (
+              <span className="inline-block bg-kare-100 text-kare-700 text-xs px-2 py-0.5 rounded-full">
+                {item.tags[0]}
+              </span>
+            )}
+          </div>
           
-          {category.items.length === 0 ? (
-            <p className="text-gray-500 text-sm">No items in this category</p>
-          ) : (
-            <div className="space-y-2">
-              {category.items
-                // Sort based on activeSort (this is just a simple example)
-                .sort((a, b) => activeSort === 'latest' ? -1 : 1)
-                .slice(0, 3) // Limit to first 3 items per category for simplicity
-                .map(item => (
-                  <div key={item._id} className="text-sm">
-                    <span className="text-gray-800 hover:underline cursor-pointer">{item.title}</span>
-                    {item.tags && item.tags.length > 0 && (
-                      <span className="text-xs text-gray-500 ml-2">
-                        {item.tags[0]}
-                      </span>
-                    )}
-                  </div>
-                ))
-              }
-            </div>
+          {item.description && (
+            <p className="text-gray-600 text-sm line-clamp-2">{item.description}</p>
           )}
         </div>
       ))}
