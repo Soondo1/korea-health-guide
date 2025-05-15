@@ -22,7 +22,7 @@ const mockKoreaTimesNews: KoreanNewsItem[] = [
     url: 'https://www.koreatimes.co.kr/www/nation/2023/04/113_12345.html',
     source: 'The Korea Times',
     sourceUrl: 'https://www.koreatimes.co.kr',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Korea+Times'
+    imageUrl: 'https://images.unsplash.com/photo-1631815588090-d4bfec5b7e7b?q=80&w=300&auto=format&fit=crop'
   },
   {
     id: 'kt-2',
@@ -32,7 +32,7 @@ const mockKoreaTimesNews: KoreanNewsItem[] = [
     url: 'https://www.koreatimes.co.kr/www/nation/2023/04/113_12346.html',
     source: 'The Korea Times',
     sourceUrl: 'https://www.koreatimes.co.kr',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Korea+Times'
+    imageUrl: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=300&auto=format&fit=crop'
   },
   {
     id: 'kt-3',
@@ -42,7 +42,7 @@ const mockKoreaTimesNews: KoreanNewsItem[] = [
     url: 'https://www.koreatimes.co.kr/www/nation/2023/04/113_12347.html',
     source: 'The Korea Times',
     sourceUrl: 'https://www.koreatimes.co.kr',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Korea+Times'
+    imageUrl: 'https://images.unsplash.com/photo-1584118624012-df056829fbd0?q=80&w=300&auto=format&fit=crop'
   }
 ];
 
@@ -55,7 +55,7 @@ const mockKoreaHeraldNews: KoreanNewsItem[] = [
     url: 'https://www.koreaherald.com/view.php?ud=20220510000000',
     source: 'The Korea Herald',
     sourceUrl: 'https://www.koreaherald.com',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Korea+Herald'
+    imageUrl: 'https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?q=80&w=300&auto=format&fit=crop'
   },
   {
     id: 'kh-2',
@@ -65,7 +65,7 @@ const mockKoreaHeraldNews: KoreanNewsItem[] = [
     url: 'https://www.koreaherald.com/view.php?ud=20220511000000',
     source: 'The Korea Herald',
     sourceUrl: 'https://www.koreaherald.com',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Korea+Herald'
+    imageUrl: 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?q=80&w=300&auto=format&fit=crop'
   },
   {
     id: 'kh-3',
@@ -75,7 +75,7 @@ const mockKoreaHeraldNews: KoreanNewsItem[] = [
     url: 'https://www.koreaherald.com/view.php?ud=20220512000000',
     source: 'The Korea Herald',
     sourceUrl: 'https://www.koreaherald.com',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Korea+Herald'
+    imageUrl: 'https://images.unsplash.com/photo-1492551557933-34265f7af79e?q=80&w=300&auto=format&fit=crop'
   }
 ];
 

@@ -30,7 +30,7 @@ const ScrollingBar: React.FC<ScrollingBarProps> = ({ newsItems, koreanNews = [] 
             {koreanNews.map((news) => (
               <div 
                 key={news.id}
-                className="mb-3 pb-3 border-b border-gray-300"
+                className="mb-4 pb-4 border-b border-gray-300"
               >
                 <a 
                   href={news.url} 
@@ -38,21 +38,45 @@ const ScrollingBar: React.FC<ScrollingBarProps> = ({ newsItems, koreanNews = [] 
                   rel="noopener noreferrer"
                   className="block"
                 >
-                  <h3 className="text-gray-800 font-medium hover:text-gray-600 cursor-pointer">
-                    {news.title}
-                  </h3>
-                  <div className="flex items-center text-xs text-gray-500 mt-1">
-                    <img 
-                      src={`https://www.google.com/s2/favicons?domain=${news.sourceUrl}`} 
-                      alt={news.source} 
-                      className="h-3 w-3 mr-1"
-                    />
-                    <span className="font-medium mr-2">{news.source}</span>
-                    {news.publishedAt && (
-                      <span>
-                        {new Date(news.publishedAt).toLocaleDateString()}
-                      </span>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {/* News Image */}
+                    {news.imageUrl && (
+                      <div className="w-full sm:w-1/3 h-24 overflow-hidden rounded">
+                        <img 
+                          src={news.imageUrl} 
+                          alt={news.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            target.src = '/assets/placeholder-image.jpg';
+                          }}
+                        />
+                      </div>
                     )}
+                    
+                    {/* News Content */}
+                    <div className={news.imageUrl ? "w-full sm:w-2/3" : "w-full"}>
+                      <h3 className="text-gray-800 font-medium hover:text-gray-600 cursor-pointer">
+                        {news.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm my-1 line-clamp-2">
+                        {news.summary}
+                      </p>
+                      <div className="flex items-center text-xs text-gray-500 mt-1">
+                        <img 
+                          src={`https://www.google.com/s2/favicons?domain=${news.sourceUrl}`} 
+                          alt={news.source} 
+                          className="h-3 w-3 mr-1"
+                        />
+                        <span className="font-medium mr-2">{news.source}</span>
+                        {news.publishedAt && (
+                          <span>
+                            {new Date(news.publishedAt).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </a>
               </div>

@@ -19,6 +19,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
+// Category names from the image
+const categoryNames = [
+  "Daily Life Support",
+  "Policy News",
+  "Experience Activities",
+  "Benefits",
+  "Announcements"
+];
+
 export default function BulletinBoard() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [koreanNews, setKoreanNews] = useState<KoreanNewsItem[]>([]);
@@ -58,6 +67,40 @@ export default function BulletinBoard() {
     fetchData();
   }, []);
   
+  // Filter categories based on selection and search query
+  const filteredCategories = useMemo(() => {
+    let filtered = categories;
+    
+    // Filter by category if selected
+    if (selectedCategory) {
+      filtered = filtered.filter(cat => cat.name === selectedCategory);
+    }
+    
+    // Filter by search query if provided
+    if (searchQuery.trim()) {
+      const lowercaseQuery = searchQuery.toLowerCase().trim();
+      filtered = filtered.map(category => {
+        // Filter items within each category
+        const filteredItems = category.items?.filter(item => 
+          item.title.toLowerCase().includes(lowercaseQuery) || 
+          (item.description && item.description.toLowerCase().includes(lowercaseQuery)) ||
+          (item.tags && item.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery)))
+        ) || [];
+        
+        // Return the category with filtered items
+        return {
+          ...category,
+          items: filteredItems
+        };
+      }).filter(category => category.items.length > 0); // Only keep categories with matching items
+    }
+    
+    return filtered;
+  }, [categories, selectedCategory, searchQuery]);
+  
+  const hasSearchResults = filteredCategories.length > 0 && filteredCategories.some(cat => cat.items?.length > 0);
+  const totalItems = filteredCategories.reduce((sum, cat) => sum + (cat.items?.length || 0), 0);
+  
   // Handle loading state
   if (loading) {
     return (
@@ -91,49 +134,6 @@ export default function BulletinBoard() {
       </div>
     );
   }
-  
-  // Category names from the image
-  const categoryNames = [
-    "Daily Life Support",
-    "Policy News",
-    "Experience Activities",
-    "Benefits",
-    "Announcements"
-  ];
-  
-  // Filter categories based on selection and search query
-  const filteredCategories = useMemo(() => {
-    let filtered = categories;
-    
-    // Filter by category if selected
-    if (selectedCategory) {
-      filtered = filtered.filter(cat => cat.name === selectedCategory);
-    }
-    
-    // Filter by search query if provided
-    if (searchQuery.trim()) {
-      const lowercaseQuery = searchQuery.toLowerCase().trim();
-      filtered = filtered.map(category => {
-        // Filter items within each category
-        const filteredItems = category.items.filter(item => 
-          item.title.toLowerCase().includes(lowercaseQuery) || 
-          (item.description && item.description.toLowerCase().includes(lowercaseQuery)) ||
-          (item.tags && item.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery)))
-        );
-        
-        // Return the category with filtered items
-        return {
-          ...category,
-          items: filteredItems
-        };
-      }).filter(category => category.items.length > 0); // Only keep categories with matching items
-    }
-    
-    return filtered;
-  }, [categories, selectedCategory, searchQuery]);
-  
-  const hasSearchResults = filteredCategories.length > 0 && filteredCategories.some(cat => cat.items.length > 0);
-  const totalItems = filteredCategories.reduce((sum, cat) => sum + cat.items.length, 0);
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -315,7 +315,7 @@ export default function BulletinBoard() {
                         <h2 className="text-lg font-semibold text-kare-800">{category.name}</h2>
                         <p className="text-sm text-gray-600">{category.description}</p>
                       </div>
-                      {category.items.length > 3 && (
+                      {category.items && category.items.length > 3 && (
                         <button className="text-kare-600 hover:text-kare-800 text-sm flex items-center">
                           View all <ArrowUpRight className="ml-1 h-3 w-3" />
                         </button>

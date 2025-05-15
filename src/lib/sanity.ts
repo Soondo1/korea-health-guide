@@ -89,13 +89,34 @@ export interface BulletinPost {
 export const client = createClient({
   projectId: '4zq6kq5m', // You'll need to replace with your Sanity project ID
   dataset: 'k-are1',
-  useCdn: true,
-  apiVersion: '2024-04-01', // use the latest API version
+  useCdn: false, // Disable CDN to avoid potential CORS issues
+  apiVersion: '2023-05-03', // Use a stable API version
+  // Safely access environment variables in browser context
+  token: import.meta.env?.VITE_SANITY_API_TOKEN || undefined
 });
 
-// Set up image URL builder
+// Set up image URL builder with better error handling
 const builder = imageUrlBuilder(client);
 
 export function urlFor(source: unknown) {
-  return builder.image(source as SanityImageSource);
+  try {
+    if (!source) {
+      console.warn('Attempted to generate URL for undefined image source');
+      // Return a fallback object that mimics the ImageUrlBuilder API
+      return {
+        width: () => ({ url: () => '/assets/placeholder-image.jpg' }),
+        height: () => ({ url: () => '/assets/placeholder-image.jpg' }),
+        url: () => '/assets/placeholder-image.jpg'
+      };
+    }
+    return builder.image(source as SanityImageSource);
+  } catch (error) {
+    console.error('Error generating image URL:', error);
+    // Return a fallback object that mimics the ImageUrlBuilder API
+    return {
+      width: () => ({ url: () => '/assets/placeholder-image.jpg' }),
+      height: () => ({ url: () => '/assets/placeholder-image.jpg' }),
+      url: () => '/assets/placeholder-image.jpg'
+    };
+  }
 }

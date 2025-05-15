@@ -83,9 +83,49 @@ export async function fetchCategories(): Promise<Category[]> {
   }
 }
 
+// Add this mock data provider function after the imports
+// Mock data provider for when Sanity API is unavailable
+const getMockPosts = (): Post[] => {
+  console.log("Using mock posts data");
+  return [
+    {
+      _id: 'mock-post-1',
+      title: 'Healthcare in Korea: A Guide for Foreigners',
+      slug: { current: 'healthcare-korea-guide-foreigners' },
+      publishedAt: new Date().toISOString(),
+      summary: 'A comprehensive guide to navigating the Korean healthcare system as a foreigner.',
+      readingTime: '5 min read',
+      categories: [{ name: 'Healthcare' }, { name: 'Guides' }],
+      body: [],
+    },
+    {
+      _id: 'mock-post-2',
+      title: 'Understanding Korean Health Insurance for Expats',
+      slug: { current: 'understanding-korean-health-insurance' },
+      publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(), // 2 days ago
+      summary: 'Learn about the Korean health insurance system and how to get coverage as an expatriate.',
+      readingTime: '7 min read',
+      categories: [{ name: 'Insurance' }],
+      body: [],
+    },
+    {
+      _id: 'mock-post-3',
+      title: 'Finding English-Speaking Doctors in Seoul',
+      slug: { current: 'english-speaking-doctors-seoul' },
+      publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // 5 days ago
+      summary: 'A directory of clinics and hospitals in Seoul with English-speaking medical staff.',
+      readingTime: '4 min read',
+      categories: [{ name: 'Hospitals' }, { name: 'Seoul' }],
+      body: [],
+    },
+  ];
+};
+
+// Then update the fetchPosts function to use the mock data in development if Sanity fails
 export async function fetchPosts(): Promise<Post[]> {
   try {
-    return await client.fetch(`
+    console.log("Fetching posts from Sanity...");
+    const posts = await client.fetch(`
       *[_type == "post"] | order(publishedAt desc) {
         _id,
         title,
@@ -95,11 +135,35 @@ export async function fetchPosts(): Promise<Post[]> {
         summary,
         "readingTime": round(length(pt::text(body)) / 1500) + " min read",
         "categories": categories[]->{ name },
-        body: body
+        body
       }
     `);
+    console.log(`Successfully fetched ${posts.length} posts`);
+    return posts;
   } catch (error) {
-    return handleSanityError(error, 'fetchPosts');
+    console.error("Error in fetchPosts:", error);
+    
+    // In development mode, return mock data to allow UI testing
+    if (process.env.NODE_ENV === 'development') {
+      console.warn("Using mock data since we're in development mode");
+      return getMockPosts();
+    }
+    
+    // Check if the response contains specific Sanity error information
+    if (error instanceof Error && error.message.includes('Sanity')) {
+      console.error('Sanity API error detected');
+      // Provide more specific error messaging 
+      throw new Error(`Failed to load posts: ${error.message}`);
+    }
+    
+    // Network or CORS errors
+    if (error instanceof Error && 
+       (error.message.includes('network') || error.message.includes('CORS'))) {
+      throw new Error('Network error. Please check your internet connection and try again.');
+    }
+    
+    // Generic error fallback
+    throw new Error(`Failed to fetch posts: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 

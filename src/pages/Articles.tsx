@@ -30,9 +30,12 @@ const Articles = () => {
     const loadPosts = async () => {
       try {
         setLoading(true);
+        setError(null); // Reset any previous errors
+        console.log("Loading posts...");
         const fetchedPosts = await fetchPosts();
         setPosts(fetchedPosts);
         setFilteredPosts(fetchedPosts);
+        console.log(`Successfully loaded ${fetchedPosts.length} posts`);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -111,8 +114,37 @@ const Articles = () => {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
           <header className="mb-10">
             <h1 className="text-3xl md:text-4xl font-bold text-kare-800">Blog Articles</h1>
-            <p className="text-red-500 mt-2">{error}</p>
           </header>
+          <div className="bg-white shadow-sm rounded-lg p-8 text-center">
+            <div className="text-red-500 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <h3 className="text-xl font-medium mb-2">{error}</h3>
+              <p className="text-gray-600 mb-4">We're having trouble connecting to our content servers.</p>
+            </div>
+            <button 
+              onClick={() => {
+                setLoading(true);
+                setError(null);
+                // Re-fetch the posts
+                fetchPosts()
+                  .then(posts => {
+                    setPosts(posts);
+                    setFilteredPosts(posts);
+                    setLoading(false);
+                  })
+                  .catch(err => {
+                    console.error("Retry failed:", err);
+                    setError("Failed to load articles. Please try again later.");
+                    setLoading(false);
+                  });
+              }}
+              className="px-4 py-2 bg-kare-600 text-white rounded-md hover:bg-kare-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
         </main>
         <Footer />
       </div>
