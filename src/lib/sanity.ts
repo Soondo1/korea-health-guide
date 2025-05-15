@@ -87,12 +87,13 @@ export interface BulletinPost {
 
 // Set up Sanity client
 export const client = createClient({
-  projectId: '4zq6kq5m', // You'll need to replace with your Sanity project ID
+  projectId: '4zq6kq5m', 
   dataset: 'k-are1',
   useCdn: false, // Disable CDN to avoid potential CORS issues
   apiVersion: '2023-05-03', // Use a stable API version
-  // Safely access environment variables in browser context
-  token: import.meta.env?.VITE_SANITY_API_TOKEN || undefined
+  token: import.meta.env.VITE_SANITY_API_TOKEN,
+  withCredentials: false, // Changed to false - this was causing the CORS issue
+  perspective: 'published' // Only fetch published content
 });
 
 // Set up image URL builder with better error handling
@@ -102,21 +103,37 @@ export function urlFor(source: unknown) {
   try {
     if (!source) {
       console.warn('Attempted to generate URL for undefined image source');
-      // Return a fallback object that mimics the ImageUrlBuilder API
       return {
-        width: () => ({ url: () => '/assets/placeholder-image.jpg' }),
-        height: () => ({ url: () => '/assets/placeholder-image.jpg' }),
-        url: () => '/assets/placeholder-image.jpg'
+        width: () => ({ url: () => './placeholder.png' }),
+        height: () => ({ url: () => './placeholder.png' }),
+        url: () => './placeholder.png'
       };
     }
+    
+    // Validate the image reference format
+    const imgSource = source as SanityImageSource;
+    if (imgSource && typeof imgSource === 'object' && 'asset' in imgSource) {
+      const asset = imgSource.asset;
+      if (typeof asset === 'object' && asset && '_ref' in asset) {
+        const ref = asset._ref as string;
+        if (!ref.startsWith('image-')) {
+          console.warn('Invalid image reference format:', ref);
+          return {
+            width: () => ({ url: () => './placeholder.png' }),
+            height: () => ({ url: () => './placeholder.png' }),
+            url: () => './placeholder.png'
+          };
+        }
+      }
+    }
+    
     return builder.image(source as SanityImageSource);
   } catch (error) {
     console.error('Error generating image URL:', error);
-    // Return a fallback object that mimics the ImageUrlBuilder API
     return {
-      width: () => ({ url: () => '/assets/placeholder-image.jpg' }),
-      height: () => ({ url: () => '/assets/placeholder-image.jpg' }),
-      url: () => '/assets/placeholder-image.jpg'
+      width: () => ({ url: () => './placeholder.png' }),
+      height: () => ({ url: () => './placeholder.png' }),
+      url: () => './placeholder.png'
     };
   }
 }

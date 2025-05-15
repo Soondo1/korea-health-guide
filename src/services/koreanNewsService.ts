@@ -11,101 +11,88 @@ export interface KoreanNewsItem {
   imageUrl?: string;
 }
 
-// In a real implementation, these news would be fetched from actual APIs
-// This is a mock implementation with simulated Korean news sources
-const mockKoreaTimesNews: KoreanNewsItem[] = [
-  {
-    id: 'kt-1',
-    title: 'Healthcare challenges for foreigners in Korea addressed in new policy',
-    summary: 'The government has announced a new set of policies to improve healthcare access for foreigners living in Korea.',
-    publishedAt: new Date(Date.now() - 3600000 * 24 * 2).toISOString(), // 2 days ago
-    url: 'https://www.koreatimes.co.kr/www/nation/2023/04/113_12345.html',
-    source: 'The Korea Times',
-    sourceUrl: 'https://www.koreatimes.co.kr',
-    imageUrl: 'https://images.unsplash.com/photo-1631815588090-d4bfec5b7e7b?q=80&w=300&auto=format&fit=crop'
-  },
-  {
-    id: 'kt-2',
-    title: 'International clinics expanding in Seoul and Busan',
-    summary: 'Major hospitals in Seoul and Busan are expanding their international clinics to meet growing demand from foreign residents.',
-    publishedAt: new Date(Date.now() - 3600000 * 24 * 4).toISOString(), // 4 days ago
-    url: 'https://www.koreatimes.co.kr/www/nation/2023/04/113_12346.html',
-    source: 'The Korea Times',
-    sourceUrl: 'https://www.koreatimes.co.kr',
-    imageUrl: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=300&auto=format&fit=crop'
-  },
-  {
-    id: 'kt-3',
-    title: 'COVID-19 guidelines updated for travelers to Korea',
-    summary: 'The Korea Disease Control and Prevention Agency has updated COVID-19 guidelines for international travelers arriving in Korea.',
-    publishedAt: new Date(Date.now() - 3600000 * 24 * 5).toISOString(), // 5 days ago
-    url: 'https://www.koreatimes.co.kr/www/nation/2023/04/113_12347.html',
-    source: 'The Korea Times',
-    sourceUrl: 'https://www.koreatimes.co.kr',
-    imageUrl: 'https://images.unsplash.com/photo-1584118624012-df056829fbd0?q=80&w=300&auto=format&fit=crop'
-  }
-];
+// News API endpoint - replace with your API key
+const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || 'DEMO_KEY';
+const NEWS_API_ENDPOINT = 'https://newsapi.org/v2/everything';
 
-const mockKoreaHeraldNews: KoreanNewsItem[] = [
-  {
-    id: 'kh-1',
-    title: 'National Health Insurance to expand coverage for foreign residents',
-    summary: 'The National Health Insurance Service (NHIS) is set to expand coverage for foreign residents in Korea starting next month.',
-    publishedAt: new Date(Date.now() - 3600000 * 24 * 1).toISOString(), // 1 day ago
-    url: 'https://www.koreaherald.com/view.php?ud=20220510000000',
-    source: 'The Korea Herald',
-    sourceUrl: 'https://www.koreaherald.com',
-    imageUrl: 'https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?q=80&w=300&auto=format&fit=crop'
-  },
-  {
-    id: 'kh-2',
-    title: 'Korean medical AI technologies leading global healthcare innovation',
-    summary: 'Korean companies are at the forefront of developing AI technologies for medical diagnosis and treatment.',
-    publishedAt: new Date(Date.now() - 3600000 * 24 * 3).toISOString(), // 3 days ago
-    url: 'https://www.koreaherald.com/view.php?ud=20220511000000',
-    source: 'The Korea Herald',
-    sourceUrl: 'https://www.koreaherald.com',
-    imageUrl: 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?q=80&w=300&auto=format&fit=crop'
-  },
-  {
-    id: 'kh-3',
-    title: 'Seoul launches multilingual healthcare hotline for foreigners',
-    summary: 'The Seoul Metropolitan Government has launched a new 24/7 hotline providing healthcare information in 12 languages.',
-    publishedAt: new Date(Date.now() - 3600000 * 24 * 6).toISOString(), // 6 days ago
-    url: 'https://www.koreaherald.com/view.php?ud=20220512000000',
-    source: 'The Korea Herald',
-    sourceUrl: 'https://www.koreaherald.com',
-    imageUrl: 'https://images.unsplash.com/photo-1492551557933-34265f7af79e?q=80&w=300&auto=format&fit=crop'
-  }
-];
+// Helper function to transform news API response to our format
+const transformNewsApiResponse = (articles: any[]): KoreanNewsItem[] => {
+  return articles.map((article, index) => ({
+    id: `news-${index}-${Date.now()}`,
+    title: article.title || 'Untitled Article',
+    summary: article.description || 'No description available.',
+    publishedAt: article.publishedAt || new Date().toISOString(),
+    url: article.url || '#',
+    source: article.source?.name || 'Unknown Source',
+    sourceUrl: article.url?.split('/').slice(0, 3).join('/') || '#',
+    imageUrl: article.urlToImage || getPlaceholderImage(index)
+  }));
+};
 
-export function fetchKoreanNews(limit: number = 10): Promise<KoreanNewsItem[]> {
-  // In a real implementation, this would make API calls to Korean news sources
-  // For now, we'll combine our mock data and sort by date
-  const combinedNews = [...mockKoreaTimesNews, ...mockKoreaHeraldNews]
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .slice(0, limit);
-  
-  return Promise.resolve(combinedNews);
+// Get a placeholder image that exists
+function getPlaceholderImage(index: number): string {
+  const placeholders = [
+    'https://images.unsplash.com/photo-1550831107-1553da8c8464?q=80&w=300&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1631549916768-4119b4220bb9?q=80&w=300&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?q=80&w=300&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=300&auto=format&fit=crop'
+  ];
+  return placeholders[index % placeholders.length];
+}
+
+export async function fetchKoreanNews(limit: number = 10): Promise<KoreanNewsItem[]> {
+  try {
+    // ⚠️ NOTE: Using NewsAPI from browsers directly is restricted in their free tier
+    // You need to:
+    // 1. Either request temporary access to the CORS proxy at https://cors-anywhere.herokuapp.com/corsdemo
+    // 2. Or use the NewsAPI from your own backend server
+    
+    // Log the attempt to fetch
+    console.log("Attempting to fetch news from NewsAPI...");
+    
+    // For development, we'll use fallback data to avoid CORS issues
+    // In production, consider:
+    // 1. Making the API call from your backend API
+    // 2. Using a different news API that allows CORS requests from browsers
+    // 3. Using a paid NewsAPI subscription which supports browsers directly
+    
+    // Uncomment below if you've requested CORS proxy access:
+    /*
+    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+    const apiUrl = `${NEWS_API_ENDPOINT}?q=health+korea&language=en&pageSize=${limit}&apiKey=${NEWS_API_KEY}`;
+    const fullUrl = `${CORS_PROXY}${apiUrl}`;
+    
+    const response = await fetch(fullUrl, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`News API returned status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.status === 'ok' && Array.isArray(data.articles) && data.articles.length > 0) {
+      return transformNewsApiResponse(data.articles);
+    }
+    */
+    
+    // For now, use fallback data as described above
+    console.log("Using fallback Korean news data due to browser CORS limitations with NewsAPI free tier");
+    return useFallbackData(limit);
+  } catch (error) {
+    console.error('Error fetching news data:', error);
+    return useFallbackData(limit);
+  }
 }
 
 export function fetchKoreanNewsBySource(source: string, limit: number = 5): Promise<KoreanNewsItem[]> {
-  let newsItems: KoreanNewsItem[] = [];
-  
-  if (source === 'The Korea Times') {
-    newsItems = mockKoreaTimesNews;
-  } else if (source === 'The Korea Herald') {
-    newsItems = mockKoreaHeraldNews;
-  } else {
-    // Return all sources if not specified
-    newsItems = [...mockKoreaTimesNews, ...mockKoreaHeraldNews];
-  }
-  
-  return Promise.resolve(
-    newsItems
-      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-      .slice(0, limit)
-  );
+  return fetchKoreanNews(limit).then(news => {
+    if (source === 'all') return news;
+    return news.filter(item => item.source.includes(source)).slice(0, limit);
+  });
 }
 
 // Convert Korean news items to the format expected by the ScrollingBar component
@@ -115,4 +102,54 @@ export function convertToNewsItems(koreanNews: KoreanNewsItem[]): NewsItem[] {
     title: `${news.title} (${news.source})`,
     publishedAt: news.publishedAt
   }));
+}
+
+// Fallback data function
+function useFallbackData(limit: number): KoreanNewsItem[] {
+  console.log('Using fallback Korean news data');
+  
+  const fallbackNews: KoreanNewsItem[] = [
+    {
+      id: 'fallback-1',
+      title: 'Healthcare challenges for foreigners in Korea addressed in new policy',
+      summary: 'The government has announced a new set of policies to improve healthcare access for foreigners living in Korea.',
+      publishedAt: new Date().toISOString(),
+      url: 'https://example.com/healthcare-policy',
+      source: 'Korean Health News',
+      sourceUrl: 'https://example.com',
+      imageUrl: 'https://images.unsplash.com/photo-1550831107-1553da8c8464?q=80&w=300&auto=format&fit=crop'
+    },
+    {
+      id: 'fallback-2',
+      title: 'International clinics expanding in Seoul and Busan',
+      summary: 'Major hospitals in Seoul and Busan are expanding their international clinics to meet growing demand from foreign residents.',
+      publishedAt: new Date(Date.now() - 3600000 * 24 * 2).toISOString(),
+      url: 'https://example.com/international-clinics',
+      source: 'Korea Medical Journal',
+      sourceUrl: 'https://example.com',
+      imageUrl: 'https://images.unsplash.com/photo-1631549916768-4119b4220bb9?q=80&w=300&auto=format&fit=crop'
+    },
+    {
+      id: 'fallback-3',
+      title: 'COVID-19 guidelines updated for travelers to Korea',
+      summary: 'The Korea Disease Control and Prevention Agency has updated COVID-19 guidelines for international travelers arriving in Korea.',
+      publishedAt: new Date(Date.now() - 3600000 * 24 * 5).toISOString(),
+      url: 'https://example.com/covid-guidelines',
+      source: 'The Korea Times',
+      sourceUrl: 'https://www.koreatimes.co.kr',
+      imageUrl: 'https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?q=80&w=300&auto=format&fit=crop'
+    },
+    {
+      id: 'fallback-4',
+      title: 'National Health Insurance coverage expansion for foreigners',
+      summary: 'The National Health Insurance Service is set to expand coverage for foreign residents in Korea starting next month.',
+      publishedAt: new Date(Date.now() - 3600000 * 24 * 1).toISOString(),
+      url: 'https://example.com/insurance-expansion',
+      source: 'The Korea Herald',
+      sourceUrl: 'https://www.koreaherald.com',
+      imageUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=300&auto=format&fit=crop'
+    },
+  ];
+  
+  return fallbackNews.slice(0, limit);
 } 

@@ -4,6 +4,7 @@ import { NewsItem, Category, CategoryItem, Post, BulletinPost, ImageType } from 
 import { TypedObject } from '@portabletext/types';
 import { PortableTextMarkComponentProps } from '@portabletext/react';
 import { urlFor } from '@/lib/sanity';
+import { mockPosts, mockNewsItems, mockCategories } from '@/lib/mockData';
 
 // Helper function for error handling
 const handleSanityError = (error: unknown, context: string) => {
@@ -34,7 +35,9 @@ export async function fetchNewsItems(): Promise<NewsItem[]> {
       }
     `);
   } catch (error) {
-    return handleSanityError(error, 'fetchNewsItems');
+    console.error("Error fetching news items:", error);
+    console.warn("Using mock news items as fallback");
+    return mockNewsItems;
   }
 }
 
@@ -79,53 +82,17 @@ export async function fetchCategories(): Promise<Category[]> {
     );
     return categoriesWithItems;
   } catch (error) {
-    return handleSanityError(error, 'fetchCategories');
+    console.error("Error fetching categories:", error);
+    console.warn("Using mock categories as fallback");
+    return mockCategories;
   }
 }
 
-// Add this mock data provider function after the imports
-// Mock data provider for when Sanity API is unavailable
-const getMockPosts = (): Post[] => {
-  console.log("Using mock posts data");
-  return [
-    {
-      _id: 'mock-post-1',
-      title: 'Healthcare in Korea: A Guide for Foreigners',
-      slug: { current: 'healthcare-korea-guide-foreigners' },
-      publishedAt: new Date().toISOString(),
-      summary: 'A comprehensive guide to navigating the Korean healthcare system as a foreigner.',
-      readingTime: '5 min read',
-      categories: [{ name: 'Healthcare' }, { name: 'Guides' }],
-      body: [],
-    },
-    {
-      _id: 'mock-post-2',
-      title: 'Understanding Korean Health Insurance for Expats',
-      slug: { current: 'understanding-korean-health-insurance' },
-      publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(), // 2 days ago
-      summary: 'Learn about the Korean health insurance system and how to get coverage as an expatriate.',
-      readingTime: '7 min read',
-      categories: [{ name: 'Insurance' }],
-      body: [],
-    },
-    {
-      _id: 'mock-post-3',
-      title: 'Finding English-Speaking Doctors in Seoul',
-      slug: { current: 'english-speaking-doctors-seoul' },
-      publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // 5 days ago
-      summary: 'A directory of clinics and hospitals in Seoul with English-speaking medical staff.',
-      readingTime: '4 min read',
-      categories: [{ name: 'Hospitals' }, { name: 'Seoul' }],
-      body: [],
-    },
-  ];
-};
-
-// Then update the fetchPosts function to use the mock data in development if Sanity fails
+// Update the fetchPosts function to prioritize Sanity data over mock data
 export async function fetchPosts(): Promise<Post[]> {
   try {
     console.log("Fetching posts from Sanity...");
-    const posts = await client.fetch(`
+    const query = `
       *[_type == "post"] | order(publishedAt desc) {
         _id,
         title,
@@ -137,33 +104,56 @@ export async function fetchPosts(): Promise<Post[]> {
         "categories": categories[]->{ name },
         body
       }
-    `);
-    console.log(`Successfully fetched ${posts.length} posts`);
-    return posts;
+    `;
+    
+    // Attempt to fetch posts with proper error handling
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    const fetchWithRetry = async (): Promise<Post[]> => {
+      try {
+        const posts = await client.fetch(query);
+        console.log(`Successfully fetched ${posts.length} posts from Sanity`);
+        return posts;
+      } catch (error) {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          console.warn(`Retry attempt ${retryCount}/${maxRetries} after error:`, error);
+          // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+          return fetchWithRetry();
+        }
+        throw error;
+      }
+    };
+
+    return await fetchWithRetry();
   } catch (error) {
     console.error("Error in fetchPosts:", error);
     
-    // In development mode, return mock data to allow UI testing
-    if (process.env.NODE_ENV === 'development') {
-      console.warn("Using mock data since we're in development mode");
-      return getMockPosts();
-    }
-    
-    // Check if the response contains specific Sanity error information
-    if (error instanceof Error && error.message.includes('Sanity')) {
-      console.error('Sanity API error detected');
-      // Provide more specific error messaging 
-      throw new Error(`Failed to load posts: ${error.message}`);
-    }
-    
-    // Network or CORS errors
+    // Only use mock data if there's an error
     if (error instanceof Error && 
-       (error.message.includes('network') || error.message.includes('CORS'))) {
-      throw new Error('Network error. Please check your internet connection and try again.');
+        (error.message.includes('CORS') || 
+         error.message.includes('network') ||
+         error.message.includes('403') ||
+         error.message.includes('Failed to fetch') ||
+         error.message.includes('Access-Control-Allow-Origin'))) {
+      console.warn("CORS issue detected. Using mock articles as FALLBACK ONLY.");
+      
+      // Show detailed guidance in development
+      console.info(`
+        CORS issue detected when connecting to Sanity. To fix this:
+        1. Make sure you have set up CORS in your Sanity dashboard:
+           - Go to https://www.sanity.io/manage/project/4zq6kq5m
+           - Go to Settings > API
+           - Add http://localhost:3000 to the CORS origins list
+        2. Check that your API token has proper permissions
+        3. Verify your environment variables are correctly set
+      `);
     }
     
-    // Generic error fallback
-    throw new Error(`Failed to fetch posts: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.warn("Using mock posts as a fallback due to Sanity fetch error");
+    return mockPosts;
   }
 }
 
@@ -189,7 +179,15 @@ export async function fetchPostBySlug(slug: string): Promise<Post | null> {
     return post || null;
   } catch (error) {
     console.error(`Error in fetchPostBySlug for slug ${slug}:`, error);
-    handleSanityError(error, 'fetchPostBySlug');
+    
+    // Try to find the post in mock data by slug
+    const mockPost = mockPosts.find(post => post.slug.current === slug);
+    if (mockPost) {
+      console.warn(`Using mock post for slug ${slug} due to API error`);
+      return mockPost;
+    }
+    
+    // If no matching mock post, return null
     return null;
   }
 }

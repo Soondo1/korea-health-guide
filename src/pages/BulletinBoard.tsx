@@ -39,31 +39,58 @@ export default function BulletinBoard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeView, setActiveView] = useState<'bulletin' | 'calendar'>('bulletin');
   
-  useEffect(() => {
-    const fetchData = async () => {
+  // Define fetchData outside of useEffect so it can be referenced elsewhere
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      
       try {
-        setLoading(true);
-        
         // Fetch news items from Sanity
         const news = await fetchNewsItems();
         setNewsItems(news);
-        
+      } catch (err) {
+        console.error("Error fetching news items:", err);
+        // Continue with other fetches even if this one fails
+        setNewsItems([]);
+      }
+      
+      try {
         // Fetch Korean news
         const kNews = await fetchKoreanNews(5);
         setKoreanNews(kNews);
-        
+      } catch (err) {
+        console.error("Error fetching Korean news:", err);
+        // Continue with other fetches even if this one fails
+        setKoreanNews([]);
+      }
+      
+      try {
         // Fetch categories from Sanity
         const cats = await fetchCategories();
         setCategories(cats);
-        
-        setLoading(false);
       } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Failed to load content. Please try again later.");
-        setLoading(false);
+        console.error("Error fetching categories:", err);
+        // Continue with other fetches even if this one fails
+        setCategories([]);
       }
-    };
-    
+      
+      setLoading(false);
+    } catch (err) {
+      console.error("Error in main fetchData function:", err);
+      
+      // Check for CORS errors
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (errorMessage.includes('CORS') || errorMessage.includes('Access-Control-Allow-Origin')) {
+        setError("CORS issue detected. For local development, you may need to configure Sanity to allow requests from localhost.");
+      } else {
+        setError("Failed to load content. Please try again later.");
+      }
+      
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
     fetchData();
   }, []);
   
@@ -126,8 +153,23 @@ export default function BulletinBoard() {
         <Navbar />
         <div className="container py-8 max-w-6xl mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8 text-center text-kare-800">Bulletin Board</h1>
-          <div className="flex justify-center items-center h-64">
-            <p className="text-lg text-red-500">{error}</p>
+          <div className="flex flex-col justify-center items-center h-64">
+            <div className="text-red-500 mb-4 text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <p className="text-lg">{error}</p>
+            </div>
+            <button 
+              onClick={() => {
+                setLoading(true);
+                setError(null);
+                fetchData();
+              }}
+              className="px-4 py-2 bg-kare-600 text-white rounded-md hover:bg-kare-700 transition-colors"
+            >
+              Try Again
+            </button>
           </div>
         </div>
         <Footer />
