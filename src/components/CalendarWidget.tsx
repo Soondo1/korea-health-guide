@@ -3,10 +3,9 @@ import {
   Holiday,
   CalendarEvent,
   getKoreanHolidays, 
-  getEvents, 
+  getSystemEvents, 
   getHolidayForDate, 
-  getEventsForDate,
-  addEvent
+  getEventsForDate
 } from '../services/calendarService';
 
 const CalendarWidget: React.FC = () => {
@@ -15,12 +14,6 @@ const CalendarWidget: React.FC = () => {
   const [holidays, setHolidays] = useState<Holiday[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [showEventDetails, setShowEventDetails] = useState(false);
-  const [showAddEventForm, setShowAddEventForm] = useState(false);
-  const [newEvent, setNewEvent] = useState({
-    title: '',
-    type: 'event' as 'appointment' | 'reminder' | 'event',
-    description: '',
-  });
   
   // Get current month name and year
   const monthName = currentMonth.toLocaleString('default', { month: 'long' });
@@ -31,8 +24,8 @@ const CalendarWidget: React.FC = () => {
     // Get Korean holidays for current year
     setHolidays(getKoreanHolidays(currentMonth.getFullYear()));
     
-    // Get events (would be fetched from a database in a real application)
-    setEvents(getEvents());
+    // Get events (system events from our service)
+    setEvents(getSystemEvents());
   }, [currentMonth.getFullYear()]);
   
   // Get days in month
@@ -54,7 +47,6 @@ const CalendarWidget: React.FC = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
     setSelectedDate(null);
     setShowEventDetails(false);
-    setShowAddEventForm(false);
   };
   
   // Handle next month
@@ -62,7 +54,6 @@ const CalendarWidget: React.FC = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
     setSelectedDate(null);
     setShowEventDetails(false);
-    setShowAddEventForm(false);
   };
 
   // Handle date selection
@@ -70,34 +61,11 @@ const CalendarWidget: React.FC = () => {
     const selectedDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
     setSelectedDate(selectedDate);
     setShowEventDetails(true);
-    setShowAddEventForm(false);
-  };
-
-  // Handle adding new event
-  const handleAddEvent = () => {
-    if (selectedDate && newEvent.title) {
-      const eventToAdd = {
-        ...newEvent,
-        date: selectedDate
-      };
-      
-      const createdEvent = addEvent(eventToAdd);
-      setEvents([...events, createdEvent]);
-      
-      // Reset form
-      setNewEvent({
-        title: '',
-        type: 'event',
-        description: '',
-      });
-      
-      setShowAddEventForm(false);
-    }
   };
 
   // Generate calendar days
   const generateCalendarDays = () => {
-    const days = [];
+    const days: React.ReactNode[] = [];
     
     // Add empty cells for days before the first day of month
     for (let i = 0; i < firstDayOfMonth; i++) {
@@ -152,6 +120,7 @@ const CalendarWidget: React.FC = () => {
           <button 
             onClick={handlePrevMonth} 
             className="text-gray-600 hover:text-gray-900 w-6 h-6 flex items-center justify-center"
+            aria-label="Previous month"
           >
             &lt;
           </button>
@@ -159,6 +128,7 @@ const CalendarWidget: React.FC = () => {
           <button 
             onClick={handleNextMonth} 
             className="text-gray-600 hover:text-gray-900 w-6 h-6 flex items-center justify-center"
+            aria-label="Next month"
           >
             &gt;
           </button>
@@ -179,18 +149,10 @@ const CalendarWidget: React.FC = () => {
         </div>
         
         {/* Event details section */}
-        {showEventDetails && selectedDate && !showAddEventForm && (
+        {showEventDetails && selectedDate && (
           <div className="mt-auto">
-            <div className="flex justify-between items-center mb-1">
-              <div className="text-xs font-medium text-gray-700">
-                {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-              </div>
-              <button 
-                onClick={() => setShowAddEventForm(true)} 
-                className="text-xs text-blue-600 hover:text-blue-800"
-              >
-                Add Event
-              </button>
+            <div className="text-xs font-medium text-gray-700 mb-1">
+              {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </div>
             
             {/* Holiday information */}
@@ -216,60 +178,6 @@ const CalendarWidget: React.FC = () => {
             ) : (!getHolidayForDate(selectedDate, holidays) && (
               <div className="text-xs text-gray-500 italic">No events scheduled</div>
             ))}
-          </div>
-        )}
-        
-        {/* Add Event Form */}
-        {showAddEventForm && selectedDate && (
-          <div className="mt-auto bg-white rounded p-2">
-            <div className="flex justify-between items-center mb-2">
-              <div className="text-xs font-medium">
-                Add Event for {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </div>
-              <button 
-                onClick={() => setShowAddEventForm(false)}
-                className="text-xs text-gray-600 hover:text-gray-800"
-              >
-                Cancel
-              </button>
-            </div>
-            
-            <div className="space-y-2">
-              <input
-                type="text"
-                placeholder="Event Title"
-                className="w-full px-2 py-1 text-xs border rounded"
-                value={newEvent.title}
-                onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
-              />
-              
-              <select
-                aria-label="Event Type"
-                className="w-full px-2 py-1 text-xs border rounded"
-                value={newEvent.type}
-                onChange={(e) => setNewEvent({...newEvent, type: e.target.value as 'appointment' | 'reminder' | 'event'})}
-              >
-                <option value="event">Event</option>
-                <option value="appointment">Appointment</option>
-                <option value="reminder">Reminder</option>
-              </select>
-              
-              <textarea
-                placeholder="Description (optional)"
-                className="w-full px-2 py-1 text-xs border rounded"
-                rows={2}
-                value={newEvent.description}
-                onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
-              ></textarea>
-              
-              <button
-                onClick={handleAddEvent}
-                disabled={!newEvent.title}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs py-1 rounded disabled:opacity-50"
-              >
-                Add Event
-              </button>
-            </div>
           </div>
         )}
       </div>

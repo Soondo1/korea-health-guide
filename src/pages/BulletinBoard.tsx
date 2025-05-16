@@ -4,11 +4,12 @@ import Footer from "../components/Footer";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ScrollingBar from "../components/ScrollingBar";
 import CalendarWidget from "../components/CalendarWidget";
+import Calendar from "../components/Calendar";
 import CategoryList from "../components/CategoryList";
 import { fetchNewsItems, fetchCategories } from "@/services/sanityService";
 import { KoreanNewsItem, fetchKoreanNews, convertToNewsItems } from "@/services/koreanNewsService";
 import { NewsItem, Category } from "@/lib/sanity";
-import { ChevronDown, Search, Filter, Calendar, Info, ArrowUpRight } from "lucide-react";
+import { ChevronDown, Search, Filter, Calendar as CalendarIcon, Info, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   DropdownMenu,
@@ -206,7 +207,7 @@ export default function BulletinBoard() {
               className="data-[state=active]:bg-kare-600 data-[state=active]:text-white"
             >
               <span className="flex items-center">
-                <Calendar className="w-4 h-4 mr-2" />
+                <CalendarIcon className="w-4 h-4 mr-2" />
                 Calendar View
               </span>
             </TabsTrigger>
@@ -229,8 +230,8 @@ export default function BulletinBoard() {
                 </div>
                 
                 {/* Right Column - Calendar */}
-                <div className="w-full md:w-1/3 h-64">
-                  <CalendarWidget />
+                <div className="w-full md:w-1/3 h-64 overflow-auto">
+                  <Calendar />
                 </div>
               </div>
               
@@ -376,7 +377,7 @@ export default function BulletinBoard() {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-4 text-kare-800">Calendar View</h2>
               <div className="h-[500px]">
-                <CalendarWidget />
+                <Calendar />
               </div>
             </div>
           </TabsContent>

@@ -1,100 +1,225 @@
 import React from 'react';
-import { Instagram, Linkedin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Instagram, Linkedin, Mail, MapPin, CalendarDays, FileText, Heart, Info, Phone } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Footer = () => {
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
+  const linkVariants = {
+    initial: { scale: 1 },
+    hover: { scale: 1.05, color: "#2563eb", transition: { duration: 0.2 } }
+  };
+
+  const socialVariants = {
+    initial: { scale: 1, rotate: 0 },
+    hover: { scale: 1.2, rotate: 5, transition: { duration: 0.2 } }
+  };
+
   return (
-    <footer className="bg-gray-50 border-t mt-16 py-8 px-4">
+    <motion.footer 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={containerVariants}
+      className="bg-gray-50 border-t mt-16 py-12 px-4"
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between">
-          <div className="mb-6 md:mb-0">
-            <div className="text-xl font-bold text-kare-700 font-serif">K-are</div>
-            <p className="mt-2 text-sm text-gray-500">
-              Helping foreigners navigate Korean healthcare
-            </p>
+        <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between">
+          <div className="mb-8 md:mb-0">
+            <motion.div 
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              className="text-2xl font-bold text-kare-700 font-serif"
+            >
+              <Link to="/">K-are</Link>
+            </motion.div>
+            <motion.p variants={itemVariants} className="mt-2 text-sm text-gray-500 max-w-xs">
+              Helping foreigners navigate Korean healthcare with comprehensive resources, guides, and community support.
+            </motion.p>
             
             {/* Social Media Links */}
-            <div className="flex mt-4 space-x-4">
-              <a 
+            <motion.div variants={itemVariants} className="flex mt-4 space-x-4">
+              <motion.a 
+                variants={socialVariants}
+                initial="initial"
+                whileHover="hover"
                 href="https://www.instagram.com/karekoreahealth/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-600 hover:text-kare-600"
+                className="text-gray-600 hover:text-kare-600 transition-colors duration-300"
                 aria-label="K-are Instagram Page"
               >
-                <Instagram size={20} />
-              </a>
-              <a 
+                <Instagram size={22} />
+              </motion.a>
+              <motion.a 
+                variants={socialVariants}
+                initial="initial"
+                whileHover="hover"
                 href="https://www.linkedin.com/company/k-are/posts/?feedView=all" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-600 hover:text-kare-600"
+                className="text-gray-600 hover:text-kare-600 transition-colors duration-300"
                 aria-label="K-are LinkedIn Page"
               >
-                <Linkedin size={20} />
-              </a>
-            </div>
+                <Linkedin size={22} />
+              </motion.a>
+            </motion.div>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase mb-2">
+            <motion.div variants={itemVariants}>
+              <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase mb-4 flex items-center">
+                <FileText size={16} className="mr-2 text-kare-600" />
                 Resources
               </h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-gray-600 hover:text-kare-600">Guides</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-kare-600">Hospital Directory</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-kare-600">Insurance FAQ</a></li>
+              <ul className="space-y-3 text-sm">
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/guide" className="text-gray-600 hover:text-kare-600 transition-colors">Healthcare Guides</Link>
+                  </motion.div>
+                </motion.li>
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/articles" className="text-gray-600 hover:text-kare-600 transition-colors">Articles</Link>
+                  </motion.div>
+                </motion.li>
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/calendar" className="text-gray-600 hover:text-kare-600 transition-colors">Korea Calendar</Link>
+                  </motion.div>
+                </motion.li>
               </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase mb-2">
+            </motion.div>
+            
+            <motion.div variants={itemVariants}>
+              <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase mb-4 flex items-center">
+                <Heart size={16} className="mr-2 text-kare-600" />
                 Community
               </h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-gray-600 hover:text-kare-600">Forums</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-kare-600">Stories</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-kare-600">Events</a></li>
+              <ul className="space-y-3 text-sm">
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/bulletin-board" className="text-gray-600 hover:text-kare-600 transition-colors">Bulletin Board</Link>
+                  </motion.div>
+                </motion.li>
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/articles" className="text-gray-600 hover:text-kare-600 transition-colors">Health Stories</Link>
+                  </motion.div>
+                </motion.li>
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/guide" className="text-gray-600 hover:text-kare-600 transition-colors">Expat Resources</Link>
+                  </motion.div>
+                </motion.li>
               </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase mb-2">
+            </motion.div>
+            
+            <motion.div variants={itemVariants}>
+              <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase mb-4 flex items-center">
+                <Info size={16} className="mr-2 text-kare-600" />
                 Company
               </h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/about" className="text-gray-600 hover:text-kare-600">About</a></li>
-                <li><a href="/contact" className="text-gray-600 hover:text-kare-600">Contact</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-kare-600">Privacy</a></li>
+              <ul className="space-y-3 text-sm">
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/about" className="text-gray-600 hover:text-kare-600 transition-colors">About Us</Link>
+                  </motion.div>
+                </motion.li>
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/contact" className="text-gray-600 hover:text-kare-600 transition-colors">Contact</Link>
+                  </motion.div>
+                </motion.li>
+                <motion.li whileHover="hover" initial="initial">
+                  <motion.div variants={linkVariants}>
+                    <Link to="/about" className="text-gray-600 hover:text-kare-600 transition-colors">Our Mission</Link>
+                  </motion.div>
+                </motion.li>
               </ul>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
         
-        <div className="mt-8 border-t border-gray-200 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-400">
-            © {new Date().getFullYear()} K-are. All rights reserved.
-          </p>
-          <div className="mt-4 md:mt-0 flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Connect with us:</span>
-            <a 
+        <motion.div 
+          variants={itemVariants}
+          className="mt-12 border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center"
+        >
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col md:flex-row gap-4 md:items-center mb-6 md:mb-0"
+          >
+            <div className="flex items-center text-gray-500 text-sm">
+              <MapPin size={16} className="mr-2 text-kare-600" />
+              <span>Seoul, South Korea</span>
+            </div>
+            <div className="flex items-center text-gray-500 text-sm">
+              <Mail size={16} className="mr-2 text-kare-600" />
+              <a href="mailto:contact@k-are.com" className="hover:text-kare-600 transition-colors">
+                contact@k-are.com
+              </a>
+            </div>
+            <div className="flex items-center text-gray-500 text-sm">
+              <CalendarDays size={16} className="mr-2 text-kare-600" />
+              <span>© {new Date().getFullYear()} K-are</span>
+            </div>
+          </motion.div>
+          
+          <motion.div 
+            variants={itemVariants}
+            className="flex gap-6"
+          >
+            <motion.a 
+              whileHover={{ y: -3 }}
               href="https://www.instagram.com/karekoreahealth/" 
-              className="text-gray-500 hover:text-kare-600"
+              className="text-gray-500 hover:text-kare-600 text-sm transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
               Instagram
-            </a>
-            <a 
+            </motion.a>
+            <motion.a 
+              whileHover={{ y: -3 }}
               href="https://www.linkedin.com/company/k-are/posts/?feedView=all" 
-              className="text-gray-500 hover:text-kare-600"
+              className="text-gray-500 hover:text-kare-600 text-sm transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
               LinkedIn
-            </a>
-          </div>
-        </div>
+            </motion.a>
+            <motion.a 
+              whileHover={{ y: -3 }}
+              href="mailto:contact@k-are.com" 
+              className="text-gray-500 hover:text-kare-600 text-sm transition-colors"
+            >
+              Email
+            </motion.a>
+          </motion.div>
+        </motion.div>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
 

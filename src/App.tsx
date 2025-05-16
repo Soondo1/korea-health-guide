@@ -19,6 +19,7 @@ import BulletinBoard from "./pages/BulletinBoard";
 import Contact from "./pages/Contact";
 import Guide from "./pages/Guide";
 import GuideArticle from "./pages/GuideArticle";
+import CalendarPage from "./pages/CalendarPage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
   { path: "/guide", element: <Guide /> },
   { path: "/guide/:topic", element: <GuideArticle /> },
   { path: "/healthcare-facilities", element: <Guide /> },
+  { path: "/calendar", element: <CalendarPage /> },
   { path: "*", element: <NotFound /> }
 ]);
 
