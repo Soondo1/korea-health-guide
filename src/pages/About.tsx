@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Instagram, Linkedin, Mail, Users, Target, Heart } from "lucide-react";
+import { Instagram, Linkedin, Mail, Users, Target, Heart, Calendar, Star } from "lucide-react";
 import { motion } from "framer-motion";
 
 const About = () => {
@@ -75,6 +75,21 @@ const About = () => {
     }
   ];
 
+  const roadmapData = [
+    { step: 1, title: "Complete website design (launch it)", date: "JUNE 2025", color: "from-slate-600 to-slate-700" },
+    { step: 2, title: "Complete guide manual design and launch", date: "JULY 2025", color: "from-teal-600 to-teal-700" },
+    { step: 3, title: "Special feature release (Health check-up function)", date: "AUGUST 2025", color: "from-kare-600 to-kare-700" },
+    { step: 4, title: "Special feature release", date: "SEPTEMBER 2025", color: "from-slate-500 to-slate-600" },
+    { step: 5, title: "Special feature release (Community function)", date: "OCTOBER 2025", color: "from-teal-500 to-teal-600" },
+    { step: 6, title: "Collaboration", date: "NOVEMBER 2025", color: "from-kare-500 to-kare-600" },
+    { step: 7, title: "Expansion", date: "DECEMBER 2025", color: "from-purple-600 to-purple-700" },
+    { step: 8, title: "Expand user base", date: "JANUARY 2026", color: "from-green-600 to-green-700" },
+    { step: 9, title: "Prepare financing materials", date: "FEBRUARY 2026", color: "from-blue-600 to-blue-700" },
+    { step: 10, title: "Exhibition preparation", date: "MARCH 2026", color: "from-teal-700 to-teal-800" },
+    { step: 11, title: "Qualify for trade shows", date: "APRIL 2026", color: "from-kare-700 to-kare-800" },
+    { step: 12, title: "Become a registered company", date: "MAY 2026", color: "from-red-500 to-red-600", isSpecial: true }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-lavender-50">
       <Navbar />
@@ -102,6 +117,7 @@ const About = () => {
           {[
             { id: "mission", label: "Our Mission", icon: <Target size={18} /> },
             { id: "team", label: "Our Team", icon: <Users size={18} /> },
+            { id: "roadmap", label: "Our Roadmap", icon: <Calendar size={18} /> },
             { id: "connect", label: "Connect", icon: <Heart size={18} /> }
           ].map((item) => (
             <button
@@ -285,6 +301,83 @@ const About = () => {
                   ))}
                 </motion.ul>
               </div>
+            </motion.div>
+          )}
+
+          {/* Roadmap Section */}
+          {activeSection === "roadmap" && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-3xl font-bold text-kare-700 mb-6 flex items-center">
+                <Calendar className="mr-3 text-kare-600" />
+                Our One Year Plan
+              </h2>
+              
+              <p className="text-lg text-gray-700 mb-8">
+                We have an ambitious roadmap for the next year, focusing on expanding our services, 
+                building community features, and establishing K-are as the go-to resource for 
+                healthcare information in Korea.
+              </p>
+
+              <div className="space-y-6">
+                {roadmapData.map((item, index) => (
+                  <motion.div
+                    key={item.step}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                    className="flex items-center group"
+                  >
+                    {/* Timeline connector */}
+                    <div className="flex flex-col items-center mr-6">
+                      <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${item.color} text-white flex items-center justify-center font-bold text-lg shadow-lg group-hover:scale-110 transition-transform`}>
+                        {item.step}
+                      </div>
+                      {index < roadmapData.length - 1 && (
+                        <div className="w-1 h-8 bg-gradient-to-b from-gray-300 to-gray-200 mt-2"></div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 flex items-center justify-between">
+                      <div className={`bg-gradient-to-r ${item.color} text-white px-6 py-4 rounded-2xl shadow-md group-hover:shadow-lg transition-all flex-1 max-w-md`}>
+                        <h3 className="font-semibold text-lg">{item.title}</h3>
+                        {item.isSpecial && (
+                          <div className="flex items-center mt-2">
+                            <Star className="h-4 w-4 mr-1 fill-current" />
+                            <Star className="h-4 w-4 mr-1 fill-current" />
+                            <Star className="h-4 w-4 fill-current" />
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="ml-6 text-right">
+                        <div className="text-lg font-bold text-kare-800">
+                          {item.date}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2 }}
+                className="mt-10 bg-gradient-to-r from-kare-50 to-lavender-50 rounded-xl p-6 border border-kare-200"
+              >
+                <h3 className="text-xl font-bold text-kare-800 mb-3">Our Vision for 2026</h3>
+                <p className="text-gray-700">
+                  By May 2026, K-are will be a registered company providing comprehensive healthcare 
+                  support services to the international community in Korea. We aim to be the most 
+                  trusted and reliable resource for healthcare navigation, with innovative features 
+                  and strong community connections.
+                </p>
+              </motion.div>
             </motion.div>
           )}
           

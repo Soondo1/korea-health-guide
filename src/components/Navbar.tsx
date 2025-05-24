@@ -34,16 +34,6 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link to="/bulletin-board" className="hover:text-kare-600 transition-colors">
-              Bulletin
-            </Link>
-          </li>
-          <li>
-            <Link to="/calendar" className="hover:text-kare-600 transition-colors">
-              Calendar
-            </Link>
-          </li>
-          <li>
             <Link to="/contact" className="hover:text-kare-600 transition-colors">
               Contact
             </Link>
@@ -102,24 +92,6 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Blog
-            </Link>
-          </li>
-          <li>
-            <Link 
-              to="/bulletin-board" 
-              className="block py-2 px-2 hover:bg-gray-100 rounded hover:text-kare-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Bulletin
-            </Link>
-          </li>
-          <li>
-            <Link 
-              to="/calendar" 
-              className="block py-2 px-2 hover:bg-gray-100 rounded hover:text-kare-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Calendar
             </Link>
           </li>
           <li>
