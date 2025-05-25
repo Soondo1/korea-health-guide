@@ -13,8 +13,12 @@ export default function Navbar() {
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-logo opacity-70"></div>
       <nav className="max-w-7xl mx-auto flex items-center justify-between p-4">
         {/* Left side: Logo/Brand */}
-        <Link to="/" className="text-2xl font-bold font-serif">
-          <span className="bg-clip-text text-transparent bg-gradient-logo">K-are</span>
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/assets/kare-logo.png" 
+            alt="K-are Logo" 
+            className="h-10 w-auto" 
+          />
         </Link>
 
         {/* Center: Nav Links (hidden on mobile) */}
