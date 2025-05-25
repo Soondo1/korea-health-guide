@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import HeroBanner from "../components/HeroBanner";
 import Footer from "../components/Footer";
 import { Heart, Shield, Users, Globe, Linkedin, ChevronDown, ChevronUp, HelpCircle, Calendar, Star, ArrowRight } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -208,7 +208,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 relative">
+    <div className="min-h-screen bg-gradient-to-b from-white via-kare-50/20 to-white relative">
       <Navbar />
       
       {/* Strong Banner */}
@@ -220,13 +220,13 @@ const Index = () => {
           className="fixed inset-0 -z-10"
           style={{ y: yBackground }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-kare-50/30 to-lavender-50/30"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-kare-50/30 to-teal-50/30"></div>
         </motion.div>
       )}
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16 relative z-10">
         
-        {/* What K-are Stands For Section - Mobile Optimized */}
+                {/* What K-are Stands For Section - Mobile Optimized */}
         <motion.section 
           ref={valuesRef}
           className="mb-12 sm:mb-20"
@@ -239,16 +239,16 @@ const Index = () => {
             variants={fadeInUpVariants}
           >
             <motion.h2 
-              className="text-2xl sm:text-3xl md:text-4xl font-bold text-kare-800 mb-3 sm:mb-4 px-2"
+              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2"
               whileInView={{ opacity: 1, y: 0 }}
               initial={{ opacity: 0, y: isMobile ? 15 : 30 }}
               transition={{ duration: isMobile ? 0.4 : 0.6 }}
               viewport={{ once: true }}
             >
-              What K-are Stands For
+              <span className="bg-clip-text text-transparent bg-gradient-logo">What K-are Stands For</span>
             </motion.h2>
             <motion.p 
-              className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto px-4"
+              className="text-base sm:text-lg text-kare-600 max-w-3xl mx-auto px-4"
               whileInView={{ opacity: 1, y: 0 }}
               initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
               transition={{ duration: isMobile ? 0.4 : 0.6, delay: 0.1 }}
@@ -291,10 +291,10 @@ const Index = () => {
                   whileHover={!isTouch && !prefersReducedMotion ? { rotate: 360 } : {}}
                   transition={{ duration: 0.6 }}
                 >
-                  <value.icon className={`h-6 w-6 sm:h-8 sm:w-8 ${value.iconColor}`} />
+                  {React.createElement(value.icon, { className: `h-6 w-6 sm:h-8 sm:w-8 ${value.iconColor}` })}
                 </motion.div>
                 <h3 className="text-lg sm:text-xl font-semibold text-kare-800 mb-2">{value.title}</h3>
-                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{value.description}</p>
+                <p className="text-sm sm:text-base text-kare-600 leading-relaxed">{value.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -303,7 +303,7 @@ const Index = () => {
         {/* Team Behind K-are Section - Mobile Optimized */}
         <motion.section 
           ref={teamRef}
-          className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 shadow-sm mb-12 sm:mb-20 overflow-hidden"
+          className="bg-gradient-to-br from-white via-kare-50 to-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 shadow-sm mb-12 sm:mb-20 overflow-hidden"
           initial="hidden"
           animate={teamInView ? "visible" : "hidden"}
           variants={containerVariants}
@@ -313,81 +313,45 @@ const Index = () => {
             className="text-center mb-8 sm:mb-12"
             variants={fadeInUpVariants}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-kare-800 mb-3 sm:mb-4">
-              The Team Behind K-are
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-logo">The Team Behind K-are</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto px-2">
+            <p className="text-base sm:text-lg text-kare-700 max-w-3xl mx-auto px-2">
               We're a passionate team of healthcare professionals, developers, and expats 
               who understand the challenges of navigating Korean healthcare firsthand.
             </p>
           </motion.div>
           
-          <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-            variants={containerVariants}
-          >
-            {teamMembers.map((member, index) => (
-              <motion.div 
-                key={index} 
-                className="text-center group p-4 rounded-lg hover:bg-gray-50 transition-colors touch-manipulation"
-                variants={itemVariants}
-                whileHover={!prefersReducedMotion ? { y: -3 } : {}}
-                whileTap={isTouch ? { scale: 0.98 } : {}}
-                whileInView={{ 
-                  opacity: 1, 
-                  x: 0,
-                  rotateY: 0
-                }}
-                initial={{ 
-                  opacity: 0, 
-                  x: isMobile ? 0 : (index % 2 === 0 ? -25 : 25),
-                  rotateY: 0
-                }}
-                transition={{ 
-                  duration: isMobile ? 0.4 : 0.6, 
-                  delay: index * (isMobile ? 0.05 : 0.1)
-                }}
-                viewport={{ once: true }}
-              >
-                <motion.div 
-                  className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-kare-400 to-kare-600 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center overflow-hidden"
-                  whileHover={!isTouch && !prefersReducedMotion ? { 
-                    boxShadow: "0 10px 20px rgba(75, 116, 255, 0.2)" 
-                  } : {}}
-                >
-                  <img 
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=4b74ff&color=fff&size=96`}
-                    alt={member.name}
-                    className="w-full h-full rounded-full object-cover"
-                    loading="lazy"
-                  />
-                </motion.div>
-                <h3 className="text-base sm:text-lg font-semibold text-kare-800 mb-1">{member.name}</h3>
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <p className="text-kare-600 text-sm">{member.role}</p>
-                  {member.linkedIn && (
-                    <motion.a 
-                      href={member.linkedIn} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 transition-colors p-1 touch-manipulation"
-                      aria-label={`LinkedIn profile of ${member.name}`}
-                      whileHover={!isTouch ? { scale: 1.2 } : {}}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Linkedin size={16} />
-                    </motion.a>
-                  )}
-        </div>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed px-2">{member.bio}</p>
-              </motion.div>
-            ))}
-          </motion.div>
+          {/* Placeholder for team members - removed as requested */}
           
+          {/* Meet Our Team Button */}
+          <motion.div 
+            className="mt-8 text-center"
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+            transition={{ delay: isMobile ? 0.3 : 0.4, duration: isMobile ? 0.4 : 0.6 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-kare-600 mb-4 px-2">
+              Want to learn more about our amazing team?
+            </p>
+            <motion.div
+              whileHover={!isTouch ? { scale: 1.05 } : {}}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link 
+                to="/about#team"
+                className="inline-flex items-center bg-gradient-to-r from-kare-600 to-teal-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg hover:from-kare-700 hover:to-teal-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 touch-manipulation"
+              >
+                Meet Our Team
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              </Link>
+            </motion.div>
+          </motion.div>
+
           {/* Mission Statement */}
           <motion.div 
-            className="mt-8 sm:mt-12 text-center bg-gradient-to-r from-kare-50 to-lavender-50 rounded-lg sm:rounded-xl p-6 sm:p-8"
+            className="mt-8 sm:mt-12 text-center bg-gradient-to-r from-kare-50 to-teal-50 rounded-lg sm:rounded-xl p-6 sm:p-8"
             whileInView={{ opacity: 1, scale: 1 }}
             initial={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: isMobile ? 0.4 : 0.6, delay: 0.3 }}
@@ -398,14 +362,14 @@ const Index = () => {
               healthcare as a foreigner in Korea. Our vision is a community where no one feels lost 
               or alone when seeking medical help."
             </blockquote>
-            <cite className="text-kare-600 font-semibold">— Shangbiao (Alex) Hong, Founder & CEO</cite>
+            <cite className="text-teal-500 font-semibold">— Shangbiao (Alex) Hong, Founder & CEO</cite>
           </motion.div>
         </motion.section>
 
         {/* Interactive Roadmap Section - Mobile Optimized */}
         <motion.section 
           ref={roadmapRef}
-          className="bg-gradient-to-br from-kare-600 via-kare-700 to-lavender-600 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 shadow-lg mb-12 sm:mb-20 text-white overflow-hidden relative"
+          className="bg-gradient-to-br from-kare-600 via-kare-700 to-teal-600 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 shadow-lg mb-12 sm:mb-20 text-white overflow-hidden relative"
           initial="hidden"
           animate={roadmapInView ? "visible" : "hidden"}
           variants={containerVariants}
@@ -426,111 +390,18 @@ const Index = () => {
                   whileHover={!isTouch && !prefersReducedMotion ? { rotate: 360 } : {}}
                   transition={{ duration: 0.6 }}
                 >
-                  <Calendar className="h-8 w-8 sm:h-10 sm:w-10 text-yellow-200 mr-2 sm:mr-3" />
+                  <Calendar className="h-8 w-8 sm:h-10 sm:w-10 text-teal-200 mr-2 sm:mr-3" />
                 </motion.div>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
                   Our Roadmap to Success
             </h2>
               </div>
-              <p className="text-base sm:text-lg text-blue-100 max-w-3xl mx-auto px-2">
+              <p className="text-base sm:text-lg text-teal-100 max-w-3xl mx-auto px-2">
                 Follow our ambitious 12-month journey from website launch to becoming a registered company
               </p>
             </motion.div>
 
-            {/* Mobile-Optimized Timeline Grid */}
-            <motion.div 
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8"
-              variants={containerVariants}
-            >
-              {roadmapData.map((item, index) => (
-                <motion.div
-                  key={item.step}
-                  variants={itemVariants}
-                  whileHover={!isTouch && !prefersReducedMotion ? { 
-                    scale: 1.03, 
-                    y: -3
-                  } : {}}
-                  whileTap={isTouch ? { scale: 0.98 } : {}}
-                  onTouchStart={() => setHoveredStep(item.step)}
-                  onTouchEnd={() => setHoveredStep(null)}
-                  className="relative cursor-pointer touch-manipulation"
-                  whileInView={{ 
-                    opacity: 1, 
-                    scale: 1,
-                    rotateX: 0
-                  }}
-                  initial={{ 
-                    opacity: 0, 
-                    scale: 0.9,
-                    rotateX: 0
-                  }}
-                  transition={{ 
-                    duration: isMobile ? 0.3 : 0.5, 
-                    delay: index * (isMobile ? 0.02 : 0.05)
-                  }}
-                  viewport={{ once: true }}
-                >
-                  <motion.div 
-                    className={`bg-gradient-to-br ${item.color} rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg transition-all duration-300 ${
-                      hoveredStep === item.step ? 'shadow-2xl ring-2 ring-white/30' : ''
-                    }`}
-                    whileHover={!isTouch ? {
-                      boxShadow: "0 15px 30px rgba(0,0,0,0.2)"
-                    } : {}}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <motion.div 
-                        className="bg-white/20 rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center"
-                        whileHover={!isTouch && !prefersReducedMotion ? { rotate: 360 } : {}}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <span className="text-white font-bold text-xs sm:text-sm">{item.step}</span>
-                      </motion.div>
-                      {item.isSpecial && (
-                        <motion.div 
-                          className="flex"
-                          animate={!prefersReducedMotion ? { 
-                            scale: [1, 1.1, 1],
-                          } : {}}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatType: "reverse"
-                          }}
-                        >
-                          <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current text-yellow-300" />
-                          <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current text-yellow-300" />
-                          <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current text-yellow-300" />
-                        </motion.div>
-                      )}
-                    </div>
-                    <h3 className="font-semibold text-xs sm:text-sm mb-1 sm:mb-2 text-white leading-tight">
-                      {item.shortTitle || item.title}
-                    </h3>
-                    <p className="text-xs text-white/80 font-medium">
-                      {item.date}
-                    </p>
-                  </motion.div>
-                  
-                  {/* Mobile-friendly tooltip */}
-                  {!isMobile && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                      animate={{ 
-                        opacity: hoveredStep === item.step ? 1 : 0,
-                        y: hoveredStep === item.step ? -10 : 10,
-                        scale: hoveredStep === item.step ? 1 : 0.8
-                      }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white text-gray-800 p-3 rounded-lg shadow-xl z-10 pointer-events-none max-w-48"
-                    >
-                      <p className="text-xs font-medium">{item.title}</p>
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rotate-45"></div>
-                    </motion.div>
-                  )}
-                </motion.div>
-              ))}
-            </motion.div>
+            {/* Placeholder for roadmap timeline - removed as requested */}
 
             {/* Call to Action */}
             <motion.div
@@ -540,18 +411,18 @@ const Index = () => {
               transition={{ delay: isMobile ? 0.3 : 1.2, duration: isMobile ? 0.4 : 0.6 }}
               viewport={{ once: true }}
             >
-              <p className="text-base sm:text-lg text-blue-100 mb-4 sm:mb-6 px-2">
-                Want to see the detailed roadmap and learn more about our plans?
+              <p className="text-base sm:text-lg text-teal-100 mb-4 sm:mb-6 px-2">
+                Check out our complete roadmap to see how we're building K-are step by step!
               </p>
               <motion.div
                 whileHover={!isTouch ? { scale: 1.05 } : {}}
                 whileTap={{ scale: 0.95 }}
               >
               <Link 
-                  to="/about"
-                  className="inline-flex items-center bg-white text-kare-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 touch-manipulation"
+                  to="/about#roadmap"
+                  className="inline-flex items-center bg-white text-kare-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg hover:bg-kare-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 touch-manipulation"
               >
-                  View Full Roadmap
+                  View Our Roadmap
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
               </motion.div>
@@ -577,13 +448,13 @@ const Index = () => {
                 whileHover={!isTouch && !prefersReducedMotion ? { rotate: 360 } : {}}
                 transition={{ duration: 0.6 }}
               >
-                <HelpCircle className="h-8 w-8 sm:h-10 sm:w-10 text-kare-600 mr-2 sm:mr-3" />
+                <HelpCircle className="h-8 w-8 sm:h-10 sm:w-10 text-teal-400 mr-2 sm:mr-3" />
               </motion.div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-kare-800">
-                Frequently Asked Questions
+                <span className="bg-clip-text text-transparent bg-gradient-logo">Frequently Asked Questions</span>
               </h2>
           </div>
-            <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto px-2">
+            <p className="text-base sm:text-lg text-kare-600 max-w-3xl mx-auto px-2">
               Quick answers to common questions about Korean healthcare and insurance
             </p>
           </motion.div>
@@ -605,7 +476,7 @@ const Index = () => {
               >
                 <motion.button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-4 sm:px-6 py-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between touch-manipulation min-h-[60px]"
+                  className="w-full px-4 sm:px-6 py-4 text-left bg-gradient-to-r from-white to-kare-50 hover:to-kare-100 transition-colors flex items-center justify-between touch-manipulation min-h-[60px]"
                   whileHover={!isTouch ? { backgroundColor: "rgb(243 244 246)" } : {}}
                   whileTap={{ backgroundColor: "rgb(229 231 235)" }}
                 >
@@ -617,7 +488,7 @@ const Index = () => {
                     transition={{ duration: 0.3 }}
                     className="flex-shrink-0"
                   >
-                    <ChevronDown className="h-5 w-5 text-kare-600" />
+                    <ChevronDown className="h-5 w-5 text-teal-400" />
                   </motion.div>
                 </motion.button>
                 
@@ -631,7 +502,7 @@ const Index = () => {
                   className="overflow-hidden"
                 >
                   <div className="px-4 sm:px-6 py-4 bg-white">
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-line">
+                    <p className="text-sm sm:text-base text-kare-700 leading-relaxed whitespace-pre-line">
                       {faq.answer}
                     </p>
         </div>
@@ -647,12 +518,12 @@ const Index = () => {
             transition={{ duration: isMobile ? 0.4 : 0.6, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <p className="text-gray-600 mb-4 px-2">
+            <p className="text-kare-600 mb-4 px-2">
               Have more questions? We're here to help!
             </p>
             <motion.a 
               href="/contact" 
-              className="inline-flex items-center bg-kare-600 hover:bg-kare-700 text-white px-6 py-3 rounded-lg font-medium transition-colors touch-manipulation min-h-[48px]"
+              className="inline-flex items-center bg-gradient-to-r from-kare-600 to-teal-500 hover:from-kare-700 hover:to-teal-600 text-white px-6 py-3 rounded-lg font-medium transition-colors touch-manipulation min-h-[48px]"
               whileHover={!isTouch ? { scale: 1.05 } : {}}
               whileTap={{ scale: 0.95 }}
             >

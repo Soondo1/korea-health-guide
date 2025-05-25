@@ -91,7 +91,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-lavender-50">
+    <div className="min-h-screen bg-gradient-to-b from-white via-kare-50/20 to-white">
       <Navbar />
       
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
@@ -101,8 +101,10 @@ const About = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-kare-800 mb-4">About K-are</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="bg-clip-text text-transparent bg-gradient-logo">About K-are</span>
+          </h1>
+          <p className="text-xl text-kare-600 max-w-3xl mx-auto">
             Bridging the gap between foreigners and Korean healthcare with community-driven resources.
           </p>
         </motion.div>
@@ -125,8 +127,8 @@ const About = () => {
               onClick={() => setActiveSection(item.id)}
               className={`flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 ${
                 activeSection === item.id
-                  ? "bg-kare-600 text-white shadow-md"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
+                  ? "bg-gradient-to-r from-kare-600 to-teal-500 text-white shadow-md"
+                  : "bg-white text-kare-700 hover:bg-kare-50"
               }`}
             >
               <span className="mr-2">{item.icon}</span>
@@ -135,7 +137,7 @@ const About = () => {
           ))}
         </motion.div>
         
-        <div className="bg-white shadow-lg rounded-2xl p-8 md:p-10">
+        <div className="bg-gradient-to-br from-white via-kare-50/10 to-white shadow-lg rounded-2xl p-8 md:p-10">
           {/* Mission Section */}
           {activeSection === "mission" && (
             <motion.div 
@@ -144,12 +146,12 @@ const About = () => {
               transition={{ duration: 0.5 }}
               className="prose prose-lg max-w-none"
             >
-              <h2 className="text-3xl font-bold text-kare-700 mb-6 flex items-center">
-                <Target className="mr-3 text-kare-600" />
-                Our Mission
+              <h2 className="text-3xl font-bold mb-6 flex items-center">
+                <Target className="mr-3 text-teal-400" />
+                <span className="bg-clip-text text-transparent bg-gradient-logo">Our Mission</span>
               </h2>
               
-              <p className="text-lg leading-relaxed text-gray-700">
+              <p className="text-lg leading-relaxed text-kare-700">
                 K-are (short for "Korea Care") is a community-driven portal created to help foreigners 
                 navigate the Korean healthcare system. Our goal is to provide up-to-date information 
                 on hospitals, insurance, pharmacies, and healthcare services in English.
@@ -159,17 +161,17 @@ const About = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="my-10 bg-lavender-50 rounded-xl p-8 border-l-4 border-kare-400 shadow-sm"
+                className="my-10 bg-gradient-to-r from-kare-50 to-teal-50 rounded-xl p-8 border-l-4 border-teal-400 shadow-sm"
               >
-                <blockquote className="italic text-xl text-gray-700 leading-relaxed">
+                <blockquote className="italic text-xl text-kare-700 leading-relaxed">
                   "We created K-are because we experienced firsthand how difficult it can be to navigate 
                   healthcare as a foreigner in Korea. Our vision is a community where no one feels lost 
                   or alone when seeking medical help."
                 </blockquote>
-                <p className="text-right mt-4 font-medium text-kare-700">— Shangbiao (Alex) Hong, Founder & CEO</p>
+                <p className="text-right mt-4 font-medium text-teal-500">— Shangbiao (Alex) Hong, Founder & CEO</p>
               </motion.div>
               
-              <p className="text-lg leading-relaxed text-gray-700">
+              <p className="text-lg leading-relaxed text-kare-700">
                 Whether you are a new resident or a long-term expat, we offer guides and personal stories 
                 to make healthcare in Korea less intimidating. The site is maintained by volunteers and 
                 healthcare professionals who understand the challenges of getting care in a new country.
@@ -180,17 +182,17 @@ const About = () => {
                   { 
                     title: "Community-Driven", 
                     description: "Created by expatriates and healthcare professionals who understand the challenges.",
-                    color: "bg-blue-50 border-blue-200" 
+                    color: "bg-kare-50 border-kare-200" 
                   },
                   { 
                     title: "Practical Resources", 
                     description: "Real solutions to common healthcare challenges faced by foreigners.",
-                    color: "bg-green-50 border-green-200" 
+                    color: "bg-teal-50 border-teal-200" 
                   },
                   { 
                     title: "Accessible Information", 
                     description: "Making complex healthcare information easy to understand and navigate.",
-                    color: "bg-amber-50 border-amber-200" 
+                    color: "bg-warmth-50 border-warmth-200" 
                   }
                 ].map((card, idx) => (
                   <motion.div
@@ -201,7 +203,7 @@ const About = () => {
                     className={`rounded-lg p-6 ${card.color} border shadow-sm`}
                   >
                     <h3 className="font-bold text-xl mb-2 text-kare-800">{card.title}</h3>
-                    <p className="text-gray-700">{card.description}</p>
+                    <p className="text-kare-600">{card.description}</p>
                   </motion.div>
                 ))}
               </div>
@@ -215,12 +217,12 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-bold text-kare-700 mb-6 flex items-center">
-                <Users className="mr-3 text-kare-600" /> 
-                Our Team
+              <h2 className="text-3xl font-bold mb-6 flex items-center">
+                <Users className="mr-3 text-teal-400" /> 
+                <span className="bg-clip-text text-transparent bg-gradient-logo">Our Team</span>
               </h2>
               
-              <p className="text-lg text-gray-700 mb-8">
+              <p className="text-lg text-kare-700 mb-8">
                 K-are is run by a passionate team of expats and Koreans who have experienced the healthcare 
                 system from different perspectives. Our contributors come from diverse backgrounds to provide
                 comprehensive support and information.
@@ -241,40 +243,40 @@ const About = () => {
                     transition={{ delay: index * 0.1, duration: 0.5 }}
                     className="flex bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                   >
-                    <div className="w-1/3 bg-lavender-100">
+                    <div className="w-1/3 bg-gradient-to-br from-kare-100 to-teal-100">
                       <img 
                         src={member.image} 
                         alt={member.name} 
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=8B5CF6&color=fff&size=256`;
+                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=324bbb&color=fff&size=256`;
                         }}
                       />
                     </div>
                     <div className="w-2/3 p-5">
                       <h3 className="font-bold text-xl text-kare-800">{member.name}</h3>
-                      <p className="text-kare-600 mb-2 flex items-center">
+                      <p className="text-teal-500 mb-2 flex items-center">
                         {member.role}
                         {member.linkedIn && (
                           <a 
                             href={member.linkedIn} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="ml-2 text-blue-600 hover:text-blue-800 transition-colors"
+                            className="ml-2 text-kare-600 hover:text-teal-400 transition-colors"
                             aria-label={`LinkedIn profile of ${member.name}`}
                           >
                             <Linkedin size={16} />
                           </a>
                         )}
                       </p>
-                      <p className="text-gray-600 text-sm">{member.bio}</p>
+                      <p className="text-kare-600 text-sm">{member.bio}</p>
                     </div>
                   </motion.div>
                 ))}
               </motion.div>
               
-              <div className="bg-lavender-50 rounded-lg p-6 border border-lavender-200">
+              <div className="bg-gradient-to-r from-kare-50 to-teal-50 rounded-lg p-6 border border-teal-200">
                 <h3 className="font-bold text-xl text-kare-800 mb-4">Our Contributors Include:</h3>
                 <motion.ul 
                   variants={staggerContainer}
@@ -295,8 +297,8 @@ const About = () => {
                       transition={{ delay: idx * 0.1, duration: 0.3 }}
                       className="flex items-start"
                     >
-                      <span className="inline-block w-6 h-6 rounded-full bg-kare-100 text-kare-600 flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">✓</span>
-                      <span>{item}</span>
+                      <span className="inline-block w-6 h-6 rounded-full bg-teal-100 text-kare-600 flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">✓</span>
+                      <span className="text-kare-700">{item}</span>
                     </motion.li>
                   ))}
                 </motion.ul>
@@ -311,12 +313,12 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-bold text-kare-700 mb-6 flex items-center">
-                <Calendar className="mr-3 text-kare-600" />
-                Our One Year Plan
+              <h2 className="text-3xl font-bold mb-6 flex items-center">
+                <Calendar className="mr-3 text-teal-400" />
+                <span className="bg-clip-text text-transparent bg-gradient-logo">Our One Year Plan</span>
               </h2>
               
-              <p className="text-lg text-gray-700 mb-8">
+              <p className="text-lg text-kare-700 mb-8">
                 We have an ambitious roadmap for the next year, focusing on expanding our services, 
                 building community features, and establishing K-are as the go-to resource for 
                 healthcare information in Korea.
@@ -337,7 +339,7 @@ const About = () => {
                         {item.step}
                       </div>
                       {index < roadmapData.length - 1 && (
-                        <div className="w-1 h-8 bg-gradient-to-b from-gray-300 to-gray-200 mt-2"></div>
+                        <div className="w-1 h-8 bg-gradient-to-b from-kare-300 to-teal-300 mt-2"></div>
                       )}
                     </div>
 
@@ -355,7 +357,7 @@ const About = () => {
                       </div>
                       
                       <div className="ml-6 text-right">
-                        <div className="text-lg font-bold text-kare-800">
+                        <div className="text-lg font-bold text-teal-500">
                           {item.date}
                         </div>
                       </div>
@@ -368,10 +370,10 @@ const About = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.2 }}
-                className="mt-10 bg-gradient-to-r from-kare-50 to-lavender-50 rounded-xl p-6 border border-kare-200"
+                className="mt-10 bg-gradient-to-r from-kare-50 to-teal-50 rounded-xl p-6 border border-teal-200"
               >
                 <h3 className="text-xl font-bold text-kare-800 mb-3">Our Vision for 2026</h3>
-                <p className="text-gray-700">
+                <p className="text-kare-700">
                   By May 2026, K-are will be a registered company providing comprehensive healthcare 
                   support services to the international community in Korea. We aim to be the most 
                   trusted and reliable resource for healthcare navigation, with innovative features 
@@ -388,12 +390,12 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-bold text-kare-700 mb-6 flex items-center">
-                <Heart className="mr-3 text-kare-600" />
-                Connect With Us
+              <h2 className="text-3xl font-bold mb-6 flex items-center">
+                <Heart className="mr-3 text-teal-400" />
+                <span className="bg-clip-text text-transparent bg-gradient-logo">Connect With Us</span>
               </h2>
               
-              <p className="text-lg text-gray-700 mb-8">
+              <p className="text-lg text-kare-700 mb-8">
                 We'd love to hear from you! Reach out to us through our social media channels 
                 or send us an email with your questions, feedback, or interest in contributing.
               </p>
@@ -406,7 +408,7 @@ const About = () => {
                     description: "Follow us for updates, tips, and community stories",
                     link: "https://www.instagram.com/karekoreahealth/",
                     linkText: "Follow on Instagram",
-                    color: "bg-gradient-to-r from-purple-500 to-pink-500"
+                    color: "bg-gradient-to-r from-kare-600 to-purple-500"
                   },
                   { 
                     icon: <Linkedin size={28} />,
@@ -414,7 +416,7 @@ const About = () => {
                     description: "Connect for professional networking and updates",
                     link: "https://www.linkedin.com/company/k-are/posts/?feedView=all",
                     linkText: "Connect on LinkedIn",
-                    color: "bg-blue-600"
+                    color: "bg-gradient-to-r from-kare-600 to-blue-600"
                   },
                   { 
                     icon: <Mail size={28} />,
@@ -422,7 +424,7 @@ const About = () => {
                     description: "Questions, feedback, or want to contribute?",
                     link: "mailto:contact@k-are.org",
                     linkText: "Send us an Email",
-                    color: "bg-kare-600"
+                    color: "bg-gradient-to-r from-kare-600 to-teal-500"
                   }
                 ].map((channel, idx) => (
                   <motion.div
@@ -439,12 +441,12 @@ const About = () => {
                       <h3 className="text-xl font-bold">{channel.title}</h3>
                     </div>
                     <div className="p-6 bg-white">
-                      <p className="text-gray-700 mb-4">{channel.description}</p>
+                      <p className="text-kare-700 mb-4">{channel.description}</p>
                       <a 
                         href={channel.link}
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="inline-block bg-lavender-50 text-kare-700 py-2 px-4 rounded-md font-medium hover:bg-lavender-100 transition-colors"
+                        className="inline-block bg-gradient-to-r from-kare-600 to-teal-500 text-white py-2 px-4 rounded-md font-medium hover:from-kare-700 hover:to-teal-600 transition-colors"
                       >
                         {channel.linkText}
                       </a>
@@ -457,9 +459,9 @@ const About = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="text-center p-6 border-t border-gray-200 mt-6"
+                className="text-center p-6 border-t border-kare-100 mt-6"
               >
-                <p className="text-gray-700">
+                <p className="text-kare-700">
                   Thank you for being a part of K-are. We welcome your feedback and contributions to make this 
                   resource more valuable for everyone.
                 </p>
