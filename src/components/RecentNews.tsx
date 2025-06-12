@@ -3,28 +3,7 @@ import { Link } from "react-router-dom";
 import { fetchKoreanNews, KoreanNewsItem } from "@/services/koreanNewsService";
 import KoreanNewsSection from "./KoreanNewsSection";
 import { Clock, ExternalLink } from "lucide-react";
-
-// Mock data for articles (in a real app, this would be fetched from Sanity)
-const mockArticles = [
-  {
-    slug: "new-medical-translation-service",
-    title: "New Medical Translation Service Launched",
-    summary: "A new service has been introduced in major hospitals to help foreigners communicate with medical staff.",
-    publishedAt: "2024-04-20T10:00:00Z"
-  },
-  {
-    slug: "free-vaccination-days-in-seoul",
-    title: "Free Vaccination Days in Seoul",
-    summary: "The Seoul Metropolitan Government is offering free vaccinations for registered foreigners throughout May.",
-    publishedAt: "2024-04-15T14:30:00Z"
-  },
-  {
-    slug: "top-hospitals-accepting-foreigners",
-    title: "Top Hospitals Accepting Foreigners",
-    summary: "Our community has compiled a list of the most foreigner-friendly hospitals across Korea with English-speaking staff.",
-    publishedAt: "2024-04-10T09:15:00Z"
-  }
-];
+import { mockPosts } from "@/lib/mockData";
 
 export default function RecentNews() {
   const [koreanNews, setKoreanNews] = useState<KoreanNewsItem[]>([]);
@@ -71,19 +50,19 @@ export default function RecentNews() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {mockArticles.map((article) => (
+        {mockPosts.slice(0, 3).map((post) => (
           <Link 
-            key={article.slug}
-            to={`/articles/${article.slug}`}
+            key={post._id}
+            to={`/articles/${post.slug.current}`}
             className="block bg-white border border-gray-100 rounded-lg p-5 hover:shadow-md transition-all hover:border-kare-200 group"
           >
             <h3 className="text-lg font-medium text-kare-800 group-hover:text-kare-600 mb-3 line-clamp-2">
-              {article.title}
+              {post.title}
             </h3>
-            <p className="text-gray-600 mb-4 text-sm line-clamp-3">{article.summary}</p>
+            <p className="text-gray-600 mb-4 text-sm line-clamp-3">{post.summary}</p>
             <div className="flex items-center text-gray-400 text-xs">
               <Clock className="h-3.5 w-3.5 mr-1.5" />
-              {formatDate(article.publishedAt)}
+              {formatDate(post.publishedAt)}
             </div>
           </Link>
         ))}

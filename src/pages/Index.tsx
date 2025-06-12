@@ -1,6 +1,8 @@
 import Navbar from "../components/Navbar";
 import HeroBanner from "../components/HeroBanner";
 import Footer from "../components/Footer";
+import TeamSlider from "../components/TeamSlider";
+import ContactForm from "../components/ContactForm";
 import { Heart, Shield, Users, Globe, Linkedin, ChevronDown, ChevronUp, HelpCircle, Calendar, Star, ArrowRight } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView, useReducedMotion } from "framer-motion";
@@ -52,43 +54,57 @@ const Index = () => {
       name: "Shangbiao (Alex) Hong", 
       role: "Founder & CEO", 
       linkedIn: "https://www.linkedin.com/in/shangbiao-hong/",
-      bio: "Former healthcare administrator with expertise in creating solutions for international patients in Korea."
+      bio: "Former healthcare administrator with expertise in creating solutions for international patients in Korea.",
+      image: "/assets/Alex.jpeg"
     },
     { 
       name: "Jayda Cez Lim", 
       role: "CFO & Marketing Officer", 
       linkedIn: "https://www.linkedin.com/in/jayda-cez-lim/",
-      bio: "Specializes in helping patients connect with the right healthcare providers in Korea."
+      bio: "Specializes in helping patients connect with the right healthcare providers in Korea.",
+      image: "/assets/Jayda.jpeg"
     },
     { 
       name: "Ryan Tan Cher", 
       role: "Operations Officer", 
       linkedIn: "https://www.linkedin.com/in/ryan-tan-cher/",
-      bio: "Developing technological solutions to make healthcare more accessible to foreigners."
+      bio: "Developing technological solutions to make healthcare more accessible to foreigners.",
+      image: "/assets/Ryan.jpeg"
     },
     { 
       name: "Colleen Chapco", 
       role: "Research Analyst & Consultant", 
       linkedIn: "https://www.linkedin.com/in/colleen-chapco/",
-      bio: "Connecting with international communities to understand their healthcare needs."
+      bio: "Connecting with international communities to understand their healthcare needs.",
+      image: "/assets/Collean.jpeg"
+    },
+    { 
+      name: "Esther Adjoa Boni", 
+      role: "Research Analyst", 
+      linkedIn: "https://www.linkedin.com/in/estheradjoaboni/",
+      bio: "Analyzes healthcare trends and gathers data to improve service offerings for foreign residents.",
+      image: "/assets/Esther.jpeg"
     },
     { 
       name: "Jennifer R.", 
       role: "Operation Officer", 
       linkedIn: "https://www.linkedin.com/in/jennifer-r/",
-      bio: "Advocates for international patients' rights and improved healthcare accessibility."
+      bio: "Advocates for international patients' rights and improved healthcare accessibility.",
+      image: "/assets/placeholder.svg"
     },
     { 
       name: "Laura Montes", 
       role: "Marketing Officer", 
       linkedIn: "https://www.linkedin.com/in/laura-montes/",
-      bio: "Creates engaging healthcare content to educate the international community."
+      bio: "Creates engaging healthcare content to educate the international community.",
+      image: "/assets/Lau.jpeg"
     },
     { 
       name: "Soondo Mutewa", 
       role: "Technology Officer(Developer)", 
       linkedIn: "https://www.linkedin.com/in/soondo-mutewa/",
-      bio: "Researches healthcare trends and needs of foreign residents in Korea."
+      bio: "Researches healthcare trends and needs of foreign residents in Korea.",
+      image: "/assets/Soondo.jpg"
     }
   ];
 
@@ -136,28 +152,28 @@ const Index = () => {
     {
       icon: Heart,
       title: "Compassion",
-      description: "We understand the challenges of seeking healthcare in a foreign country",
+      description: "We recognize how difficult it can be to navigate healthcare in a foreign country and we're here to support you every step of the way.",
       color: "bg-kare-100",
       iconColor: "text-kare-600"
     },
     {
       icon: Shield,
       title: "Trust",
-      description: "Reliable, accurate information you can count on for your health decisions",
+      description: "You deserve healthcare information that's accurate, dependable, and tailored to your needs so you could make confident decisions!",
       color: "bg-lavender-100",
       iconColor: "text-lavender-600"
     },
     {
       icon: Users,
       title: "Community",
-      description: "Connecting expats and helping each other through shared experiences",
+      description: "We bring expats together to share insights, offer support, and build a network of understanding and care.",
       color: "bg-green-100",
       iconColor: "text-green-600"
     },
     {
       icon: Globe,
       title: "Accessibility",
-      description: "Breaking down language and cultural barriers to healthcare access",
+      description: "We break down language and cultural barriers to make healthcare more approachable and easier to navigate.",
       color: "bg-blue-100",
       iconColor: "text-blue-600"
     }
@@ -239,24 +255,33 @@ const Index = () => {
             variants={fadeInUpVariants}
           >
             <motion.h2 
-              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 px-2"
               whileInView={{ opacity: 1, y: 0 }}
               initial={{ opacity: 0, y: isMobile ? 15 : 30 }}
               transition={{ duration: isMobile ? 0.4 : 0.6 }}
               viewport={{ once: true }}
             >
-              <span className="bg-clip-text text-transparent bg-gradient-logo">What K-are Stands For</span>
+              <span className="bg-clip-text text-transparent bg-gradient-logo">What K-are Stands for?</span>
             </motion.h2>
-            <motion.p 
-              className="text-base sm:text-lg text-kare-600 max-w-3xl mx-auto px-4"
+            <motion.div 
+              className="text-base sm:text-lg text-kare-600 max-w-4xl mx-auto px-4"
               whileInView={{ opacity: 1, y: 0 }}
               initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
               transition={{ duration: isMobile ? 0.4 : 0.6, delay: 0.1 }}
               viewport={{ once: true }}
             >
-              K-are is your trusted companion for navigating healthcare in Korea. 
-              We believe everyone deserves access to quality healthcare, regardless of language barriers.
-            </motion.p>
+              <p className="mb-2">
+                <span className="font-semibold">K-are (short for "Korea Care")</span> is a community-driven platform dedicated to helping 
+                foreigners navigate the Korean healthcare system with ease. It provides trusted, 
+                high-quality healthcare information and services designed to overcome language 
+                barriers and make healthcare more accessible for expatriates living in Korea.
+              </p>
+              <p>
+                K-are aims to be a reliable companion for foreigners, ensuring they have the support 
+                needed to access quality healthcare and live a more convenient, stress-free life in 
+                Korea.
+              </p>
+            </motion.div>
           </motion.div>
           
           <motion.div 
@@ -266,7 +291,7 @@ const Index = () => {
             {valuesData.map((value, index) => (
               <motion.div
                 key={index}
-                className="text-center group p-4 rounded-xl hover:bg-white/50 transition-colors touch-manipulation"
+                className="text-center group p-5 rounded-xl bg-white hover:bg-white/90 shadow-sm transition-colors touch-manipulation"
                 variants={itemVariants}
                 whileHover={!prefersReducedMotion ? mobileHover : {}}
                 whileTap={isTouch ? { scale: 0.98 } : {}}
@@ -293,8 +318,12 @@ const Index = () => {
                 >
                   {React.createElement(value.icon, { className: `h-6 w-6 sm:h-8 sm:w-8 ${value.iconColor}` })}
                 </motion.div>
-                <h3 className="text-lg sm:text-xl font-semibold text-kare-800 mb-2">{value.title}</h3>
-                <p className="text-sm sm:text-base text-kare-600 leading-relaxed">{value.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-kare-800 mb-2">
+                  {value.title}
+                </h3>
+                <p className="text-sm sm:text-base text-kare-600 leading-relaxed">
+                  {value.description}
+                </p>
               </motion.div>
             ))}
           </motion.div>
@@ -322,7 +351,20 @@ const Index = () => {
             </p>
           </motion.div>
           
-          {/* Placeholder for team members - removed as requested */}
+          {/* Team Members Slider */}
+          <motion.div
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+            transition={{ duration: isMobile ? 0.4 : 0.6 }}
+            viewport={{ once: true }}
+            className="mb-8"
+          >
+            {/* Import TeamSlider at the top of the file */}
+            <TeamSlider 
+              teamMembers={teamMembers}
+              isPaused={isTouch}
+            />
+          </motion.div>
           
           {/* Meet Our Team Button */}
           <motion.div 
@@ -531,6 +573,9 @@ const Index = () => {
             </motion.a>
           </motion.div>
         </motion.section>
+        
+        {/* Contact Form Section */}
+        <ContactForm />
         
       </main>
       

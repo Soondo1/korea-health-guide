@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +10,7 @@ import {
   createBrowserRouter, 
   RouterProvider 
 } from "react-router-dom";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Articles from "./pages/Articles";
@@ -20,6 +21,7 @@ import Contact from "./pages/Contact";
 import Guide from "./pages/Guide";
 import GuideArticle from "./pages/GuideArticle";
 import CalendarPage from "./pages/CalendarPage";
+import { debugEnvironmentVariables, printEnvFileInstructions } from "./debug-env";
 
 const queryClient = new QueryClient();
 
@@ -41,8 +43,16 @@ const router = createBrowserRouter([
 
 const App = () => {
   useEffect(() => {
-    // Display setup instructions in development mode
+    // Display setup instructions and debug info in development mode
     if (import.meta.env.DEV) {
+      // Run environment variables debug
+      debugEnvironmentVariables();
+      
+      // Print .env file instructions if environment variables are missing
+      if (!import.meta.env.VITE_SANITY_PROJECT_ID || !import.meta.env.VITE_SANITY_DATASET) {
+        printEnvFileInstructions();
+      }
+      
       console.info(`
         🚀 Korea Health Guide App - Development Mode 🚀
         
@@ -57,7 +67,7 @@ const App = () => {
         2. Get your token from https://www.sanity.io/manage
         
         3. Add http://localhost:3000 to CORS allowed origins:
-          - Go to https://www.sanity.io/manage/project/4zq6kq5m
+          - Go to https://www.sanity.io/manage
           - Navigate to Settings > API
           - Add http://localhost:3000 to CORS origins list
           
@@ -71,7 +81,9 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <RouterProvider router={router} />
+        <ErrorBoundary>
+          <RouterProvider router={router} />
+        </ErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   );

@@ -87,13 +87,14 @@ export interface BulletinPost {
 
 // Set up Sanity client
 export const client = createClient({
-  projectId: '4zq6kq5m', 
-  dataset: 'k-are1',
+  projectId: import.meta.env.VITE_SANITY_PROJECT_ID || '4zq6kq5m', 
+  dataset: import.meta.env.VITE_SANITY_DATASET || 'k-are1',
   useCdn: false, // Disable CDN to avoid potential CORS issues
-  apiVersion: '2023-05-03', // Use a stable API version
-  token: import.meta.env.VITE_SANITY_API_TOKEN,
+  apiVersion: import.meta.env.VITE_SANITY_API_VERSION || '2023-05-03', // Use a stable API version
+  token: import.meta.env.VITE_SANITY_API_TOKEN || undefined, // Only use token if available
   withCredentials: false, // Changed to false - this was causing the CORS issue
-  perspective: 'published' // Only fetch published content
+  perspective: 'published', // Only fetch published content
+  stega: false, // Disable stega to avoid browser console warnings
 });
 
 // Set up image URL builder with better error handling

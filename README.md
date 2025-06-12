@@ -106,3 +106,86 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - NAVER Maps for providing the mapping API
 - Sanity.io for the headless CMS platform
 - All contributors who have helped with content and development
+
+## Environment Variables
+
+For security purposes, all sensitive information like API keys and credentials must be stored in environment variables, not in the source code. 
+
+### Local Development
+
+1. Copy `env.example` to `.env`:
+   ```
+   cp env.example .env
+   ```
+
+2. Fill in your actual credentials in the `.env` file:
+   ```
+   VITE_SANITY_PROJECT_ID=your_actual_project_id
+   VITE_SANITY_DATASET=your_actual_dataset
+   VITE_SANITY_API_VERSION=YYYY-MM-DD
+   VITE_SANITY_API_TOKEN=your_actual_token
+   VITE_NEWS_API_KEY=your_actual_news_api_key
+   ```
+
+3. Never commit the `.env` file to version control!
+
+### Netlify Deployment 
+
+All environment variables must be configured in the Netlify dashboard:
+
+1. Go to Site settings → Environment variables
+2. Add all the required variables with your actual values
+3. Deploy your site
+
+This ensures your API keys and tokens remain secure and are not exposed in your source code.
+
+## Netlify Deployment
+
+This project is configured for deployment on Netlify with enhanced security and performance optimizations.
+
+### Deployment Configuration
+
+The `netlify.toml` file includes:
+
+- Security headers including Content-Security-Policy
+- Caching strategies for static assets
+- SPA routing configuration
+- Environment-specific build settings
+
+### Security Features
+
+1. **Environment Variables**: API keys and sensitive credentials are stored as Netlify environment variables
+   - Add these in the Netlify Dashboard: Site settings → Environment variables
+   - Required variables:
+     - `VITE_SANITY_PROJECT_ID`
+     - `VITE_SANITY_DATASET`
+     - `VITE_SANITY_API_VERSION`
+     - `VITE_SANITY_API_TOKEN`
+     - `NEWS_API_KEY` (for Netlify functions)
+
+2. **Netlify Functions**: Serverless functions to securely handle API requests
+   - `news.js`: Proxies requests to NewsAPI to avoid CORS issues and protect API keys
+
+3. **Security Headers**: Protection against common web vulnerabilities
+   - Content-Security-Policy
+   - X-Frame-Options
+   - X-XSS-Protection
+   - And more
+
+### Local Development with Netlify Functions
+
+To test Netlify functions locally:
+
+1. Install Netlify CLI:
+   ```
+   npm install -g netlify-cli
+   ```
+
+2. Create a `.env` file with your environment variables
+
+3. Start the development server:
+   ```
+   netlify dev
+   ```
+
+4. Your functions will be available at `http://localhost:8888/.netlify/functions/[function-name]`

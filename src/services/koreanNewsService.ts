@@ -42,48 +42,52 @@ function getPlaceholderImage(index: number): string {
 
 export async function fetchKoreanNews(limit: number = 10): Promise<KoreanNewsItem[]> {
   try {
-    // ⚠️ NOTE: Using NewsAPI from browsers directly is restricted in their free tier
-    // You need to:
-    // 1. Either request temporary access to the CORS proxy at https://cors-anywhere.herokuapp.com/corsdemo
-    // 2. Or use the NewsAPI from your own backend server
+    // Use Netlify function to fetch news (bypasses CORS and secures API key)
+    const isProduction = import.meta.env.PROD;
+    const functionUrl = isProduction 
+      ? `/.netlify/functions/news?limit=${limit}`
+      : `http://localhost:8888/.netlify/functions/news?limit=${limit}`;
     
-    // Log the attempt to fetch
-    console.log("Attempting to fetch news from NewsAPI...");
+    console.log(`Fetching news from Netlify function: ${functionUrl}`);
     
-    // For development, we'll use fallback data to avoid CORS issues
-    // In production, consider:
-    // 1. Making the API call from your backend API
-    // 2. Using a different news API that allows CORS requests from browsers
-    // 3. Using a paid NewsAPI subscription which supports browsers directly
-    
-    // Uncomment below if you've requested CORS proxy access:
-    /*
-    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-    const apiUrl = `${NEWS_API_ENDPOINT}?q=health+korea&language=en&pageSize=${limit}&apiKey=${NEWS_API_KEY}`;
-    const fullUrl = `${CORS_PROXY}${apiUrl}`;
-    
-    const response = await fetch(fullUrl, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
+    try {
+      const response = await fetch(functionUrl);
+      
+      if (!response.ok) {
+        throw new Error(`News API returned status: ${response.status}`);
       }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`News API returned status: ${response.status}`);
+      
+      const data = await response.json();
+      
+      if (data.status === 'ok' && Array.isArray(data.articles) && data.articles.length > 0) {
+        console.log(`Successfully retrieved ${data.articles.length} news articles`);
+        return transformNewsApiResponse(data.articles);
+      } else {
+        console.warn("News API returned no articles or invalid format", data);
+        throw new Error("Invalid data format from News API");
+      }
+    } catch (fetchError) {
+      console.error("Error fetching from Netlify function:", fetchError);
+      
+      if (isProduction) {
+        // In production, log the error but try to fallback to mock data
+        console.warn("Using fallback data in production due to API error");
+        return useFallbackData(limit);
+      } else {
+        // In development, show fallback message but also hint to start the Netlify dev server
+        console.info(`
+          Development environment detected. To test the Netlify function locally:
+          1. Install Netlify CLI: npm install -g netlify-cli
+          2. Run: netlify dev
+          3. The function will be available at http://localhost:8888/.netlify/functions/news
+          
+          Using fallback data for now.
+        `);
+        return useFallbackData(limit);
+      }
     }
-    
-    const data = await response.json();
-    
-    if (data.status === 'ok' && Array.isArray(data.articles) && data.articles.length > 0) {
-      return transformNewsApiResponse(data.articles);
-    }
-    */
-    
-    // For now, use fallback data as described above
-    console.log("Using fallback Korean news data due to browser CORS limitations with NewsAPI free tier");
-    return useFallbackData(limit);
   } catch (error) {
-    console.error('Error fetching news data:', error);
+    console.error('Error in fetchKoreanNews:', error);
     return useFallbackData(limit);
   }
 }

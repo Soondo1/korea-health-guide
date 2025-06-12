@@ -1,46 +1,45 @@
-
 <svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background elements -->
-  <rect x="100" y="50" width="400" height="300" rx="15" fill="#E5EEFF" fillOpacity="0.6"/>
-  
+  <rect x="100" y="50" width="400" height="300" rx="15" fill="#E5EEFF" fillOpacity="0.6" />
+
   <!-- Hospital building -->
-  <rect x="200" y="100" width="200" height="180" rx="5" fill="white" stroke="#3B82F6" strokeWidth="2"/>
-  <rect x="240" y="130" width="40" height="60" rx="2" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="1"/>
-  <rect x="320" y="130" width="40" height="60" rx="2" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="1"/>
-  <rect x="240" y="200" width="120" height="80" rx="2" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="1"/>
-  <rect x="280" y="230" width="40" height="50" fill="#93C5FD"/>
-  
+  <rect x="200" y="100" width="200" height="180" rx="5" fill="white" stroke="#3B82F6" strokeWidth="2" />
+  <rect x="240" y="130" width="40" height="60" rx="2" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="1" />
+  <rect x="320" y="130" width="40" height="60" rx="2" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="1" />
+  <rect x="240" y="200" width="120" height="80" rx="2" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="1" />
+  <rect x="280" y="230" width="40" height="50" fill="#93C5FD" />
+
   <!-- Red cross symbol -->
-  <rect x="275" y="80" width="50" height="10" rx="2" fill="#EF4444"/>
-  <rect x="295" y="60" width="10" height="50" rx="2" fill="#EF4444"/>
+  <rect x="275" y="80" width="50" height="10" rx="2" fill="#EF4444" />
+  <rect x="295" y="60" width="10" height="50" rx="2" fill="#EF4444" />
 
   <!-- Medical icons -->
   <!-- Stethoscope -->
-  <circle cx="150" y="150" r="15" fill="#A5B4FC"/>
-  <path d="M140 170C140 170 150 180 160 170" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round"/>
-  <path d="M150 150L150 200" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round"/>
-  
+  <circle cx="150" y="150" r="15" fill="#A5B4FC" />
+  <path d="M140 170C140 170 150 180 160 170" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" />
+  <path d="M150 150L150 200" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" />
+
   <!-- Medical clipboard -->
-  <rect x="450" y="140" width="40" height="60" rx="2" fill="white" stroke="#3B82F6" strokeWidth="1"/>
-  <rect x="460" y="155" width="20" height="2" fill="#93C5FD"/>
-  <rect x="460" y="165" width="20" height="2" fill="#93C5FD"/>
-  <rect x="460" y="175" width="20" height="2" fill="#93C5FD"/>
-  <rect x="460" y="185" width="20" height="2" fill="#93C5FD"/>
-  
+  <rect x="450" y="140" width="40" height="60" rx="2" fill="white" stroke="#3B82F6" strokeWidth="1" />
+  <rect x="460" y="155" width="20" height="2" fill="#93C5FD" />
+  <rect x="460" y="165" width="20" height="2" fill="#93C5FD" />
+  <rect x="460" y="175" width="20" height="2" fill="#93C5FD" />
+  <rect x="460" y="185" width="20" height="2" fill="#93C5FD" />
+
   <!-- People silhouettes -->
-  <circle cx="170" y="260" r="15" fill="#93C5FD"/>
-  <rect x="165" y="275" width="10" height="25" rx="5" fill="#93C5FD"/>
-  <rect x="160" y="290" width="5" height="20" rx="2" fill="#93C5FD" transform="rotate(30 160 290)"/>
-  <rect x="175" y="290" width="5" height="20" rx="2" fill="#93C5FD" transform="rotate(-30 175 290)"/>
-  
-  <circle cx="430" y="260" r="15" fill="#C7D2FE"/>
-  <rect x="425" y="275" width="10" height="25" rx="5" fill="#C7D2FE"/>
-  <rect x="420" y="290" width="5" height="20" rx="2" fill="#C7D2FE" transform="rotate(30 420 290)"/>
-  <rect x="435" y="290" width="5" height="20" rx="2" fill="#C7D2FE" transform="rotate(-30 435 290)"/>
-  
+  <circle cx="170" y="260" r="15" fill="#93C5FD" />
+  <rect x="165" y="275" width="10" height="25" rx="5" fill="#93C5FD" />
+  <rect x="160" y="290" width="5" height="20" rx="2" fill="#93C5FD" transform="rotate(30 160 290)" />
+  <rect x="175" y="290" width="5" height="20" rx="2" fill="#93C5FD" transform="rotate(-30 175 290)" />
+
+  <circle cx="430" y="260" r="15" fill="#C7D2FE" />
+  <rect x="425" y="275" width="10" height="25" rx="5" fill="#C7D2FE" />
+  <rect x="420" y="290" width="5" height="20" rx="2" fill="#C7D2FE" transform="rotate(30 420 290)" />
+  <rect x="435" y="290" width="5" height="20" rx="2" fill="#C7D2FE" transform="rotate(-30 435 290)" />
+
   <!-- Korean characters -->
   <text x="300" y="350" fontFamily="Arial" fontSize="16" fill="#3B82F6" textAnchor="middle">대한민국 의료</text>
-  
+
   <!-- English label -->
   <text x="300" y="370" fontFamily="Arial" fontSize="14" fill="#6B7280" textAnchor="middle">Healthcare in Korea</text>
 </svg>

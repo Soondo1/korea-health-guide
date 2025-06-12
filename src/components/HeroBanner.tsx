@@ -1,70 +1,89 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, MapPin, Heart, Users, ArrowRight, Shield, Star, Sparkles } from "lucide-react";
+import { Search, MapPin, Heart, Users, ArrowRight, Shield, Star, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useState, useEffect } from "react";
+import { fetchPosts } from "@/services/sanityService";
+import { Post } from "@/lib/sanity";
+import { urlFor } from "@/lib/sanity";
 
 export default function HeroBanner() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev === Math.min(posts.length - 1, 2) ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? Math.min(posts.length - 1, 2) : prev - 1));
+  };
+
+  // Fetch actual blog posts
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        setLoading(true);
+        const fetchedPosts = await fetchPosts();
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error("Error fetching posts for hero banner:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPosts();
+  }, []);
+
+  // Auto-advance slides
+  useEffect(() => {
+    if (posts.length === 0) return;
+    
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [posts.length]);
+
+  // Get the first 3 posts for the slideshow
+  const slidePosts = posts.slice(0, 3);
+
   return (
-    <section className="relative bg-gradient-to-br from-kare-600 via-kare-700 to-lavender-600 text-white overflow-hidden">
+    <section className="relative bg-gradient-to-r from-kare-700 via-kare-600 to-teal-500 text-white overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10"></div>
       <div className="absolute inset-0 opacity-20">
         <div className="h-full w-full bg-white/5 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
       </div>
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 py-16 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center lg:text-left"
+            className="text-center lg:text-left flex flex-col justify-center h-full"
           >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center bg-yellow-400/20 backdrop-blur-sm rounded-full px-6 py-3 mb-6 border border-yellow-300/30"
-            >
-              <Sparkles className="h-5 w-5 mr-3 text-yellow-200" />
-              <span className="text-lg font-bold text-yellow-200">Your Health Insurance Sidekick</span>
-              <div className="flex ml-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current text-yellow-300" />
-                ))}
-              </div>
-            </motion.div>
-
+            {/* Main Heading - matched from image */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-8 leading-tight"
             >
-              Stop decoding{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-200">
-                ancient scrolls
-              </span>
-              <br />
-              <span className="text-3xl sm:text-4xl lg:text-5xl">
-                We make Korea's healthcare{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-200 to-blue-200">
-                  make sense
-                </span>
-              </span>
+              Guided by Experience, <br />Driven by Care
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg sm:text-xl text-blue-100 mb-8 max-w-2xl lg:max-w-none leading-relaxed"
+              className="text-xl sm:text-2xl text-teal-50 mb-10 max-w-2xl lg:max-w-none leading-relaxed"
             >
-              Whether you're here to <strong className="text-yellow-200">study, work, or chase K-drama dreams</strong>, 
-              K-are cuts through the confusion and handles the hard stuff. We bridge the gap between 
-              international residents and Korea's National Health Insurance system—
-              <span className="text-green-200 font-semibold"> without the stress meltdown</span>.
+              Navigate an effortless and stress-free life in Korea with K-are.
             </motion.p>
 
             <motion.div
@@ -74,105 +93,92 @@ export default function HeroBanner() {
               className="flex flex-col sm:flex-row gap-4 mb-8"
             >
               <Link
-                to="/articles"
-                className="group bg-yellow-400 text-kare-800 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-300 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                to="/about"
+                className="group bg-yellow-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                Read Our Articles
+                About Us
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 to="/guide?tab=hospitals"
-                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300 flex items-center justify-center"
+                className="bg-kare-700/30 backdrop-blur-sm border border-kare-300/20 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-kare-700/50 transition-all duration-300 flex items-center justify-center"
               >
                 Find Healthcare
               </Link>
             </motion.div>
-
-            {/* Key Benefits */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center lg:text-left"
-            >
-              <div className="flex items-center justify-center lg:justify-start">
-                <Shield className="h-6 w-6 text-green-300 mr-2" />
-                <div>
-                  <div className="text-lg font-bold text-yellow-200">Clear Guidance</div>
-                  <div className="text-sm text-blue-200">No more confusion</div>
-                </div>
-              </div>
-              <div className="flex items-center justify-center lg:justify-start">
-                <Heart className="h-6 w-6 text-pink-300 mr-2" />
-                <div>
-                  <div className="text-lg font-bold text-yellow-200">Stress-Free</div>
-                  <div className="text-sm text-blue-200">We handle the hard stuff</div>
-                </div>
-              </div>
-              <div className="flex items-center justify-center lg:justify-start">
-                <Users className="h-6 w-6 text-purple-300 mr-2" />
-                <div>
-                  <div className="text-lg font-bold text-yellow-200">Reliable Support</div>
-                  <div className="text-sm text-blue-200">Information at your door</div>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
 
-          {/* Right Content - Enhanced Feature Cards */}
+          {/* Right Content - Blog Post Slideshow */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="relative"
+            className="relative self-center"
           >
-            {/* Main Hero Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="bg-white/15 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl mb-6"
-            >
-              <div className="text-center">
-                <div className="bg-yellow-400/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-8 w-8 text-yellow-200" />
-                </div>
-                <h3 className="font-bold text-2xl mb-3 text-white">National Health Insurance</h3>
-                <p className="text-blue-100 text-lg leading-relaxed">
-                  We provide clear, accurate, and reliable guidance throughout the registration 
-                  and coverage process, ensuring you get the healthcare access you're entitled to.
-                </p>
-              </div>
-            </motion.div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
+            {/* Slideshow with wavy effect */}
+            <Carousel className="w-full">
+              <CarouselContent>
+                {loading ? (
+                  <CarouselItem>
+                    <div className="bg-white/15 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl mb-6 overflow-hidden relative h-80 flex items-center justify-center">
+                      <div className="animate-pulse text-white">Loading blog posts...</div>
+                    </div>
+                  </CarouselItem>
+                ) : slidePosts.length > 0 ? (
+                  slidePosts.map((post) => (
+                    <CarouselItem key={post._id}>
+                      <Link to={`/articles/${post.slug.current}`}>
+                        <motion.div 
+                          className="bg-white/15 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl mb-6 overflow-hidden relative"
+                          whileHover={{ scale: 1.03 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <div className="aspect-[16/9] overflow-hidden rounded-lg mb-4">
+                            <img 
+                              src={post.mainImage ? urlFor(post.mainImage).width(800).url() : '/assets/healthcare-levels.jpg'} 
+                              alt={post.title}
+                              className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                              onError={(e) => {
+                                // Fallback for missing images
+                                const target = e.target as HTMLImageElement;
+                                target.src = "https://via.placeholder.com/800x450?text=K-are+Blog+Post";
+                              }}
+                            />
+                          </div>
+                          <h3 className="font-bold text-2xl mb-3 text-white">{post.title}</h3>
+                          {post.summary && (
+                            <p className="text-white/80 text-sm line-clamp-2">{post.summary}</p>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-30 rounded-3xl"></div>
+                        </motion.div>
+                      </Link>
+                    </CarouselItem>
+                  ))
+                ) : (
+                  <CarouselItem>
+                    <div className="bg-white/15 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl mb-6 overflow-hidden relative">
+                      <div className="aspect-[16/9] overflow-hidden rounded-lg mb-4 bg-gray-700 flex items-center justify-center">
+                        <Shield className="h-16 w-16 text-white/30" />
+                      </div>
+                      <h3 className="font-bold text-2xl mb-3 text-white">No blog posts available</h3>
+                      <p className="text-white/80 text-sm">Check back soon for new content!</p>
+                    </div>
+                  </CarouselItem>
+                )}
+              </CarouselContent>
+              <CarouselPrevious className="left-2 top-1/2" />
+              <CarouselNext className="right-2 top-1/2" />
+            </Carousel>
+            
+            {/* Read More button */}
+            <div className="flex justify-center mt-4">
+              <Link
+                to="/articles"
+                className="bg-white/10 backdrop-blur-sm text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 flex items-center justify-center"
               >
-                <div className="bg-green-400/20 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                  <Search className="h-6 w-6 text-green-200" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Easy Registration</h3>
-                <p className="text-blue-100 text-sm">
-                  Step-by-step guidance through the NHI signup process
-                </p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 sm:mt-8"
-              >
-                <div className="bg-purple-400/20 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                  <MapPin className="h-6 w-6 text-purple-200" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Find Services</h3>
-                <p className="text-blue-100 text-sm">
-                  Locate English-speaking doctors and healthcare facilities
-                </p>
-              </motion.div>
+                Read More
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </motion.div>
         </div>

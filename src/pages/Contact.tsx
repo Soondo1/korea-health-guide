@@ -1,39 +1,134 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { sanitizeInput, validateField, sanitizeFormData } from "@/lib/inputSecurity";
+import { generateCsrfToken, addCsrfHeader } from "@/lib/csrfProtection";
+
+interface FormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     subject: "",
     message: "",
   });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
+  const [csrfToken, setCsrfToken] = useState<string>("");
+  
+  useEffect(() => {
+    // Generate CSRF token when component mounts
+    const token = generateCsrfToken();
+    setCsrfToken(token);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Sanitize input on change
+    const sanitizedValue = sanitizeInput(value);
+    setFormData((prev) => ({ ...prev, [name]: sanitizedValue }));
+    
+    // Clear error when user starts typing
+    if (formErrors[name as keyof FormErrors]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name as keyof FormErrors];
+        return newErrors;
+      });
+    }
+  };
+  
+  const validateForm = (): boolean => {
+    const errors: FormErrors = {};
+    
+    // Validate name (2-50 characters)
+    const nameValidation = validateField(formData.name, 'text', true, 2, 50);
+    if (!nameValidation.isValid) {
+      errors.name = nameValidation.errorMessage;
+    }
+    
+    // Validate email
+    const emailValidation = validateField(formData.email, 'email', true);
+    if (!emailValidation.isValid) {
+      errors.email = emailValidation.errorMessage;
+    }
+    
+    // Validate subject
+    const subjectValidation = validateField(formData.subject, 'text', true, 3, 100);
+    if (!subjectValidation.isValid) {
+      errors.subject = subjectValidation.errorMessage;
+    }
+    
+    // Validate message (10-1000 characters)
+    const messageValidation = validateField(formData.message, 'message', true, 10, 1000);
+    if (!messageValidation.isValid) {
+      errors.message = messageValidation.errorMessage;
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitStatus("success");
-      // Reset form after successful submission
-      setFormData({ name: "", email: "", subject: "", message: "" });
+    try {
+      // In a production app, here you would send the sanitized data to your backend
+      const sanitizedData = {
+        name: sanitizeInput(formData.name),
+        email: sanitizeInput(formData.email),
+        subject: sanitizeInput(formData.subject),
+        message: sanitizeInput(formData.message)
+      };
       
-      // Clear success message after 5 seconds
+      // Add CSRF token to headers for API requests
+      const headers = addCsrfHeader({
+        'Content-Type': 'application/json'
+      });
+      
+      // For debugging
+      console.log('Sanitized form data:', sanitizedData);
+      console.log('Request headers with CSRF token:', headers);
+      
+      // Simulate form submission
       setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
-    }, 1500);
+        setIsSubmitting(false);
+        setSubmitStatus("success");
+        // Reset form after successful submission
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setSubmitStatus(null);
+        }, 5000);
+      }, 1500);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setSubmitStatus("error");
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -49,6 +144,9 @@ const Contact = () => {
             {/* Contact Form */}
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Hidden CSRF token input */}
+                <input type="hidden" name="_csrf" value={csrfToken} />
+                
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Your Name
@@ -60,8 +158,12 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent"
+                    maxLength={50}
+                    className={`w-full px-4 py-2 border ${formErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent`}
                   />
+                  {formErrors.name && (
+                    <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+                  )}
                 </div>
                 
                 <div>
@@ -75,8 +177,11 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent"
+                    className={`w-full px-4 py-2 border ${formErrors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent`}
                   />
+                  {formErrors.email && (
+                    <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                  )}
                 </div>
                 
                 <div>
@@ -89,7 +194,7 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent"
+                    className={`w-full px-4 py-2 border ${formErrors.subject ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent`}
                   >
                     <option value="">Select a topic</option>
                     <option value="general">General Inquiry</option>
@@ -97,6 +202,9 @@ const Contact = () => {
                     <option value="feedback">Feedback</option>
                     <option value="partnership">Partnership Opportunity</option>
                   </select>
+                  {formErrors.subject && (
+                    <p className="mt-1 text-sm text-red-500">{formErrors.subject}</p>
+                  )}
                 </div>
                 
                 <div>
@@ -110,8 +218,12 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent"
+                    maxLength={1000}
+                    className={`w-full px-4 py-2 border ${formErrors.message ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-kare-300 focus:border-transparent`}
                   ></textarea>
+                  {formErrors.message && (
+                    <p className="mt-1 text-sm text-red-500">{formErrors.message}</p>
+                  )}
                 </div>
                 
                 <button

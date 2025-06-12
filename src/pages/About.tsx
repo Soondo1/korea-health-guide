@@ -27,51 +27,58 @@ const About = () => {
     { 
       name: "Shangbiao (Alex) Hong", 
       role: "Founder & CEO", 
-      image: "/assets/placeholder.svg",
+      image: "/assets/Alex.jpeg",
       linkedIn: "https://www.linkedin.com/in/shangbiao-hong/",
-      bio: "Former healthcare administrator with expertise in creating solutions for international patients in Korea."
+      bio: ""
     },
     { 
       name: "Jayda Cez Lim", 
-      role: "Healthcare Navigator", 
-      image: "/assets/placeholder.svg",
+      role: "CFO & Marketing Director", 
+      image: "/assets/Jayda.jpeg",
       linkedIn: "https://www.linkedin.com/in/jayda-cez-lim/",
-      bio: "Specializes in helping patients connect with the right healthcare providers in Korea."
+      bio: ""
     },
     { 
       name: "Ryan Tan Cher", 
-      role: "Technology Lead", 
-      image: "/assets/placeholder.svg",
+      role: "Operations Director", 
+      image: "/assets/Ryan.jpeg",
       linkedIn: "https://www.linkedin.com/in/ryan-tan-cher/",
-      bio: "Developing technological solutions to make healthcare more accessible to foreigners."
+      bio: ""
     },
     { 
       name: "Colleen Chapco", 
-      role: "Outreach Coordinator", 
-      image: "/assets/placeholder.svg",
+      role: "Advisor & Researcher", 
+      image: "/assets/Collean.jpeg",
       linkedIn: "https://www.linkedin.com/in/colleen-chapco/",
-      bio: "Connecting with international communities to understand their healthcare needs."
+      bio: ""
+    },
+    { 
+      name: "Esther Adjoa Boni", 
+      role: "Research Analyst", 
+      image: "/assets/Esther.jpeg",
+      linkedIn: "https://www.linkedin.com/in/estheradjoaboni/",
+      bio: ""
     },
     { 
       name: "Jennifer R.", 
-      role: "Patient Advocate", 
+      role: "Operations Team", 
       image: "/assets/placeholder.svg",
       linkedIn: "https://www.linkedin.com/in/jennifer-r/",
-      bio: "Advocates for international patients' rights and improved healthcare accessibility."
+      bio: ""
     },
     { 
       name: "Laura Montes", 
-      role: "Content Creator", 
-      image: "/assets/placeholder.svg",
+      role: "Content Creator & Marketing", 
+      image: "/assets/Lau.jpeg",
       linkedIn: "https://www.linkedin.com/in/laura-montes/",
-      bio: "Creates engaging healthcare content to educate the international community."
+      bio: ""
     },
     { 
-      name: "Soondo Mutewa", 
-      role: "Research Analyst", 
-      image: "/assets/placeholder.svg",
+      name: "Soondo Innocent Mutewa", 
+      role: "Tech Lead", 
+      image: "/assets/Soondo.jpg",
       linkedIn: "https://www.linkedin.com/in/soondo-mutewa/",
-      bio: "Researches healthcare trends and needs of foreign residents in Korea."
+      bio: ""
     }
   ];
 
