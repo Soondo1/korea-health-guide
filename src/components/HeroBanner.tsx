@@ -38,14 +38,14 @@ export default function HeroBanner() {
   }, []);
 
   // Auto-advance slides
-  useEffect(() => {
-    if (posts.length === 0) return;
-    
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [posts.length]);
+useEffect(() => {
+   if (posts.length === 0) return;
+   
+   const interval = setInterval(() => {
+    setCurrentSlide((prev) => (prev === Math.min(posts.length - 1, 2) ? 0 : prev + 1));
+   }, 2000);
+   return () => clearInterval(interval);
+}, [posts.length]);
 
   // Get the first 3 posts for the slideshow
   const slidePosts = posts.slice(0, 3);

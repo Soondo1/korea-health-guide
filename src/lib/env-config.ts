@@ -6,8 +6,12 @@
 
 // Sanity configuration
 export const SANITY_CONFIG = {
-  projectId: import.meta.env.VITE_SANITY_PROJECT_ID || '4zq6kq5m',
-  dataset: import.meta.env.VITE_SANITY_DATASET || 'k-are1',
+  projectId:
+    import.meta.env.VITE_SANITY_PROJECT_ID ??
+    (ENVIRONMENT === 'development' ? '4zq6kq5m' : (() => { throw new Error('VITE_SANITY_PROJECT_ID missing'); })()),
+  dataset:
+    import.meta.env.VITE_SANITY_DATASET ??
+    (ENVIRONMENT === 'development' ? 'k-are1' : (() => { throw new Error('VITE_SANITY_DATASET missing'); })()),
   apiVersion: import.meta.env.VITE_SANITY_API_VERSION || '2023-05-03',
   token: import.meta.env.VITE_SANITY_API_TOKEN || '',
 };

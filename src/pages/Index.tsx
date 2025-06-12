@@ -191,6 +191,15 @@ const Index = () => {
     }
   };
 
+  const fadeInUpVariants = {
+    hidden: { opacity: 0, y: isMobile ? 15 : 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: isMobile ? 0.4 : 0.6 }
+    }
+  };
+
   const itemVariants = {
     hidden: { y: isMobile ? 10 : 20, opacity: 0 },
     visible: {
@@ -200,18 +209,6 @@ const Index = () => {
         type: "spring",
         stiffness: isMobile ? 200 : 100,
         duration: isMobile ? 0.3 : 0.6
-      }
-    }
-  };
-
-  const fadeInUpVariants = {
-    hidden: { y: isMobile ? 20 : 60, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: isMobile ? 0.4 : 0.6,
-        ease: "easeOut"
       }
     }
   };
@@ -288,44 +285,44 @@ const Index = () => {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
             variants={containerVariants}
           >
-            {valuesData.map((value, index) => (
-              <motion.div
-                key={index}
-                className="text-center group p-5 rounded-xl bg-white hover:bg-white/90 shadow-sm transition-colors touch-manipulation"
-                variants={itemVariants}
-                whileHover={!prefersReducedMotion ? mobileHover : {}}
-                whileTap={isTouch ? { scale: 0.98 } : {}}
-                whileInView={{ 
-                  opacity: 1, 
-                  y: 0,
-                  scale: 1
-                }}
-                initial={{ 
-                  opacity: 0, 
-                  y: isMobile ? 20 : 50,
-                  scale: 0.95
-                }}
-                transition={{ 
-                  duration: isMobile ? 0.3 : 0.5, 
-                  delay: index * (isMobile ? 0.05 : 0.1)
-                }}
-                viewport={{ once: true }}
-              >
-                <motion.div 
-                  className={`${value.color} rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4 ${!isTouch ? 'group-hover:scale-110' : ''} transition-transform duration-300`}
-                  whileHover={!isTouch && !prefersReducedMotion ? { rotate: 360 } : {}}
-                  transition={{ duration: 0.6 }}
-                >
-                  {React.createElement(value.icon, { className: `h-6 w-6 sm:h-8 sm:w-8 ${value.iconColor}` })}
-                </motion.div>
-                <h3 className="text-lg sm:text-xl font-semibold text-kare-800 mb-2">
-                  {value.title}
-                </h3>
-                <p className="text-sm sm:text-base text-kare-600 leading-relaxed">
-                  {value.description}
-                </p>
-              </motion.div>
-            ))}
+ {valuesData.map((value, valueIndex) => (
+   <motion.div 
+     key={value.title}
+     className="text-center group p-5 rounded-xl bg-white hover:bg-white/90 shadow-sm transition-colors touch-manipulation"
+     variants={itemVariants}
+     whileHover={!prefersReducedMotion ? mobileHover : {}}
+     whileTap={isTouch ? { scale: 0.98 } : {}}
+     whileInView={{ 
+       opacity: 1, 
+       y: 0,
+       scale: 1
+     }}
+     initial={{ 
+       opacity: 0, 
+       y: isMobile ? 20 : 50,
+       scale: 0.95
+     }}
+     transition={{ 
+       duration: isMobile ? 0.3 : 0.5, 
+       delay: valueIndex * (isMobile ? 0.05 : 0.1)
+     }}
+     viewport={{ once: true }}
+   >
+     <motion.div 
+       className={`${value.color} rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4 ${!isTouch ? 'group-hover:scale-110' : ''} transition-transform duration-300`}
+       whileHover={!isTouch && !prefersReducedMotion ? { rotate: 360 } : {}}
+       transition={{ duration: 0.6 }}
+     >
+       {React.createElement(value.icon, { className: `h-6 w-6 sm:h-8 sm:w-8 ${value.iconColor}` })}
+     </motion.div>
+     <h3 className="text-lg sm:text-xl font-semibold text-kare-800 mb-2">
+       {value.title}
+     </h3>
+     <p className="text-sm sm:text-base text-kare-600 leading-relaxed">
+       {value.description}
+     </p>
+   </motion.div>
+ ))}
           </motion.div>
         </motion.section>
 
@@ -505,19 +502,19 @@ const Index = () => {
             className="max-w-4xl mx-auto space-y-3 sm:space-y-4"
             variants={containerVariants}
           >
-            {faqData.map((faq, index) => (
+            {faqData.map((faq, i) => (
               <motion.div 
-                key={index} 
+                key={i} 
                 className="border border-gray-200 rounded-lg sm:rounded-xl overflow-hidden hover:shadow-md transition-shadow"
                 variants={itemVariants}
                 whileInView={{ opacity: 1, x: 0 }}
                 initial={{ opacity: 0, x: 0 }}
-                transition={{ duration: isMobile ? 0.3 : 0.5, delay: index * (isMobile ? 0.05 : 0.1) }}
+                transition={{ duration: isMobile ? 0.3 : 0.5, delay: i * (isMobile ? 0.05 : 0.1) }}
                 viewport={{ once: true }}
                 whileHover={!isTouch ? { scale: 1.01 } : {}}
               >
                 <motion.button
-                  onClick={() => toggleFAQ(index)}
+                  onClick={() => toggleFAQ(i)}
                   className="w-full px-4 sm:px-6 py-4 text-left bg-gradient-to-r from-white to-kare-50 hover:to-kare-100 transition-colors flex items-center justify-between touch-manipulation min-h-[60px]"
                   whileHover={!isTouch ? { backgroundColor: "rgb(243 244 246)" } : {}}
                   whileTap={{ backgroundColor: "rgb(229 231 235)" }}
@@ -526,7 +523,7 @@ const Index = () => {
                     {faq.question}
                   </h3>
                   <motion.div
-                    animate={{ rotate: openFAQ === index ? 180 : 0 }}
+                    animate={{ rotate: openFAQ === i ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
                     className="flex-shrink-0"
                   >
@@ -537,8 +534,8 @@ const Index = () => {
                 <motion.div
                   initial={false}
                   animate={{
-                    height: openFAQ === index ? "auto" : 0,
-                    opacity: openFAQ === index ? 1 : 0
+                    height: openFAQ === i ? "auto" : 0,
+                    opacity: openFAQ === i ? 1 : 0
                   }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="overflow-hidden"

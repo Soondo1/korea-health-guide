@@ -1,7 +1,8 @@
 // Netlify serverless function to proxy NewsAPI requests
 exports.handler = async (event, context) => {
   // Extract limit parameter from query string, default to 10
-  const { limit = 10 } = event.queryStringParameters || {};
+  let { limit = 10 } = event.queryStringParameters || {};
+limit = Math.max(1, Math.min(100, parseInt(limit, 10) || 10)); // NewsAPI max pageSize=100
   
   try {
     // Get the API key from environment variables
@@ -20,8 +21,11 @@ exports.handler = async (event, context) => {
     const apiUrl = `https://newsapi.org/v2/everything?q=health+korea&language=en&pageSize=${limit}&apiKey=${apiKey}`;
     
     // Fetch data from NewsAPI
-    const response = await fetch(apiUrl);
-    const data = await response.json();
+const response = await fetch(apiUrl);
+if (!response.ok) {
+  throw new Error(`NewsAPI responded with ${response.status}`);
+}
+const data = await response.json();
     
     // Return successful response
     return {

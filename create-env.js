@@ -22,7 +22,7 @@ VITE_ENVIRONMENT=development
 
 // Write the .env file
 try {
-  await writeFile(envFilePath, envContent);
+  await writeFile(envFilePath, envContent, { flag: 'wx' });
   console.log('✅ Successfully created .env file in project root!');
   console.log('To use the app with real data, you should add your own API tokens to this file.');
 } catch (error) {

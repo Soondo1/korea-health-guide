@@ -35,8 +35,13 @@ const ContactForm: React.FC<ContactFormProps> = ({
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [isTouch, setIsTouch] = useState('ontouchstart' in window);
+const [isMobile, setIsMobile] = useState(false);
+const [isTouch,  setIsTouch]  = useState(false);
+
+useEffect(() => {
+  setIsMobile(window.innerWidth < 768);
+  setIsTouch('ontouchstart' in window);
+}, []);
   const [csrfToken, setCsrfToken] = useState<string>("");
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   
