@@ -38,26 +38,43 @@ module.exports = {
         }
       }
       
+      // Determine package manager (npm or pnpm)
+      const usesPnpm = process.env.NETLIFY_USE_PNPM === 'true';
+      const packageManager = usesPnpm ? 'pnpm' : 'npm';
+      
+      if (verboseLogging) {
+        console.log(`📦 Using package manager: ${packageManager}`);
+      }
+      
       // Ensure build dependencies are available
       console.log('Checking for build dependencies...');
-      try {
-        require.resolve('vite');
-        console.log('✅ Vite is installed and available');
-        
-        if (verboseLogging) {
-          const vitePackage = require('vite/package.json');
-          console.log(`   - Vite version: ${vitePackage.version}`);
-        }
-      } catch (error) {
-        console.log('⚠️ Vite not found in node_modules, attempting to install...');
-        await utils.run.command('npm install vite');
-        
-        if (verboseLogging) {
-          try {
-            const vitePackage = require('vite/package.json');
-            console.log(`   - Installed Vite version: ${vitePackage.version}`);
-          } catch (e) {
-            console.log('   - Could not determine installed Vite version');
+      
+      const checkDependencies = ['vite', 'terser'];
+      
+      for (const dep of checkDependencies) {
+        try {
+          require.resolve(dep);
+          console.log(`✅ ${dep} is installed and available`);
+          
+          if (verboseLogging) {
+            try {
+              const depPackage = require(`${dep}/package.json`);
+              console.log(`   - ${dep} version: ${depPackage.version}`);
+            } catch (e) {
+              console.log(`   - Could not determine ${dep} version`);
+            }
+          }
+        } catch (error) {
+          console.log(`⚠️ ${dep} not found in node_modules, attempting to install...`);
+          await utils.run.command(`${packageManager} install ${dep}`);
+          
+          if (verboseLogging) {
+            try {
+              const depPackage = require(`${dep}/package.json`);
+              console.log(`   - Installed ${dep} version: ${depPackage.version}`);
+            } catch (e) {
+              console.log(`   - Could not determine installed ${dep} version`);
+            }
           }
         }
       }
