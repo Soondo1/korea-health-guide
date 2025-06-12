@@ -21,14 +21,37 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    outDir: 'dist',
+    sourcemap: mode !== 'production',
     minify: 'terser',
     terserOptions: {
       compress: {
         // Enable dead code elimination
         dead_code: true,
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log']
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+        pure_funcs: mode === 'production' ? ['console.log'] : []
+      }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: [
+            'react',
+            'react-dom',
+            'react-router-dom',
+            'framer-motion',
+            '@sanity/client',
+          ],
+          ui: [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-label',
+            '@radix-ui/react-slot',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-toast',
+            '@radix-ui/react-tooltip',
+          ]
+        }
       }
     }
   }

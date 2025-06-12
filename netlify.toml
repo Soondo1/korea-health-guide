@@ -1,11 +1,10 @@
 [build]
-  command = "pnpm install --frozen-lockfile && pnpm run build"
+  command = "npm install && npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20.11.0"
   NPM_VERSION = "10.2.4"
-  PNPM_VERSION = "8.10.0"
   NODE_ENV = "production"
 
 # Handle SPA routing by redirecting all requests to index.html
@@ -80,10 +79,16 @@
 
 # Branch-specific build commands
 [context.production]
-  command = "pnpm install --frozen-lockfile && pnpm run build"
+  command = "npm install && npm run build"
   
 [context.deploy-preview]
-  command = "pnpm install --frozen-lockfile && pnpm run build:dev"
+  command = "npm install && npm run build:dev"
   
 [context.branch-deploy]
-  command = "pnpm install --frozen-lockfile && pnpm run build:dev" 
+  command = "npm install && npm run build:dev"
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+[[plugins]]
+  package = "./netlify/plugins/vite-build-plugin.js" 
