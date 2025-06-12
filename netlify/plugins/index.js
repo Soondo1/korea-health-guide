@@ -1,5 +1,15 @@
+/**
+ * Vite Build Helper Plugin for Netlify
+ */
+
 module.exports = {
-  onPreBuild: async ({ utils }) => {
+  onPreBuild: async ({ utils, inputs }) => {
+    const verboseLogging = inputs.enable_verbose_logging || false;
+    
+    if (verboseLogging) {
+      console.log('🔍 Verbose logging enabled');
+    }
+    
     try {
       console.log('Preparing environment for Vite build...');
       
@@ -19,6 +29,13 @@ module.exports = {
           `⚠️ Missing required environment variables: ${missingEnvVars.join(', ')}`
         );
         console.log('⚠️ Using default values for missing environment variables');
+        
+        if (verboseLogging) {
+          console.log('📋 Environment variables that will be used:');
+          requiredEnvVars.forEach(envVar => {
+            console.log(`   - ${envVar}: ${process.env[envVar] || '(using default from netlify.toml)'}`);
+          });
+        }
       }
       
       // Ensure build dependencies are available
@@ -26,9 +43,23 @@ module.exports = {
       try {
         require.resolve('vite');
         console.log('✅ Vite is installed and available');
+        
+        if (verboseLogging) {
+          const vitePackage = require('vite/package.json');
+          console.log(`   - Vite version: ${vitePackage.version}`);
+        }
       } catch (error) {
         console.log('⚠️ Vite not found in node_modules, attempting to install...');
         await utils.run.command('npm install vite');
+        
+        if (verboseLogging) {
+          try {
+            const vitePackage = require('vite/package.json');
+            console.log(`   - Installed Vite version: ${vitePackage.version}`);
+          } catch (e) {
+            console.log('   - Could not determine installed Vite version');
+          }
+        }
       }
       
       console.log('✅ Environment is ready for Vite build');
