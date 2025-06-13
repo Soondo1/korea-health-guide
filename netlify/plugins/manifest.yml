@@ -1,5 +1,5 @@
 name: vite-build-plugin
-description: A plugin to help with Vite builds on Netlify
+# description is A plugin to help with Vite builds on Netlify
 inputs:
   - name: enable_verbose_logging
     description: Enable more detailed logging during the build process
