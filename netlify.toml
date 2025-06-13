@@ -1,10 +1,10 @@
 [build]
-  command = "pnpm install --no-frozen-lockfile; if ($?) { pnpm run build }"
+  command = "pnpm install --no-frozen-lockfile && pnpm run build"
   publish = "dist"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ./pnpm-lock.yaml"
 
 [build.environment]
-  NODE_VERSION = "20.11.0"
+  NODE_VERSION = "18.17.7"
   NPM_VERSION = "10.2.4"
   # Use pnpm
   NETLIFY_USE_PNPM = "true"
@@ -86,13 +86,13 @@
 
 # Branch-specific build commands
 [context.production]
-  command = "pnpm install --no-frozen-lockfile; if ($?) { pnpm run build }"
+  command = "pnpm install --no-frozen-lockfile && pnpm run build"
   
 [context.deploy-preview]
-  command = "pnpm install --no-frozen-lockfile; if ($?) { pnpm run build:dev }"
+  command = "pnpm install --no-frozen-lockfile && pnpm run build:dev"
   
 [context.branch-deploy]
-  command = "pnpm install --no-frozen-lockfile; if ($?) { pnpm run build:dev }"
+  command = "pnpm install --no-frozen-lockfile && pnpm run build:dev"
 
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
