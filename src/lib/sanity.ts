@@ -87,14 +87,29 @@ export interface BulletinPost {
 
 // Set up Sanity client
 export const client = createClient({
-  projectId: import.meta.env.VITE_SANITY_PROJECT_ID ?? (() => { throw new Error('Missing VITE_SANITY_PROJECT_ID'); })(),
-  dataset: import.meta.env.VITE_SANITY_DATASET ?? (() => { throw new Error('Missing VITE_SANITY_DATASET'); })(),
+  projectId: import.meta.env.VITE_SANITY_PROJECT_ID ?? (() => { 
+    console.error('Missing VITE_SANITY_PROJECT_ID environment variable');
+    throw new Error('Missing VITE_SANITY_PROJECT_ID'); 
+  })(),
+  dataset: import.meta.env.VITE_SANITY_DATASET ?? (() => { 
+    console.error('Missing VITE_SANITY_DATASET environment variable');
+    throw new Error('Missing VITE_SANITY_DATASET'); 
+  })(),
   useCdn: false, // Disable CDN to avoid potential CORS issues
   apiVersion: import.meta.env.VITE_SANITY_API_VERSION || '2023-05-03', // Use a stable API version
   token: import.meta.env.VITE_SANITY_API_TOKEN || undefined, // Only use token if available
   withCredentials: false, // Changed to false - this was causing the CORS issue
   ...(import.meta.env.VITE_SANITY_ENABLE_STEGA === 'true' && { stega: false }),
   // NOTE: `perspective` is not a valid option in v7; remove or migrate this behaviour
+});
+
+// Debug logging for environment variables
+console.log('Sanity Configuration:', {
+  projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+  dataset: import.meta.env.VITE_SANITY_DATASET,
+  apiVersion: import.meta.env.VITE_SANITY_API_VERSION,
+  hasToken: !!import.meta.env.VITE_SANITY_API_TOKEN,
+  environment: import.meta.env.MODE
 });
 
 // Set up image URL builder with better error handling
