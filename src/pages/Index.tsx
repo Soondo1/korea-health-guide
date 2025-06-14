@@ -51,57 +51,43 @@ const Index = () => {
 
   const teamMembers = [
     { 
-      name: "Shangbiao (Alex) Hong", 
-      role: "Founder & CEO", 
+      name: "Alex Hong", 
+      role: "Founder and CEO", 
       linkedIn: "https://www.linkedin.com/in/shangbiao-hong/",
       bio: "Former healthcare administrator with expertise in creating solutions for international patients in Korea.",
       image: "/assets/Alex.jpeg"
     },
     { 
       name: "Jayda Cez Lim", 
-      role: "CFO & Marketing Officer", 
+      role: "Chief Marketer", 
       linkedIn: "https://www.linkedin.com/in/jayda-cez-lim/",
       bio: "Specializes in helping patients connect with the right healthcare providers in Korea.",
       image: "/assets/Jayda.jpeg"
     },
     { 
-      name: "Ryan Tan Cher", 
-      role: "Operations Officer", 
-      linkedIn: "https://www.linkedin.com/in/ryan-tan-cher/",
-      bio: "Developing technological solutions to make healthcare more accessible to foreigners.",
-      image: "/assets/Ryan.jpeg"
-    },
-    { 
       name: "Colleen Chapco", 
-      role: "Research Analyst & Consultant", 
+      role: "Consultant", 
       linkedIn: "https://www.linkedin.com/in/colleen-chapco/",
       bio: "Connecting with international communities to understand their healthcare needs.",
       image: "/assets/Collean.jpeg"
     },
     { 
       name: "Esther Adjoa Boni", 
-      role: "Research Analyst", 
+      role: "Researcher", 
       linkedIn: "https://www.linkedin.com/in/estheradjoaboni/",
       bio: "Analyzes healthcare trends and gathers data to improve service offerings for foreign residents.",
-      image: "/assets/Esther.jpeg"
-    },
-    { 
-      name: "Jennifer R.", 
-      role: "Operation Officer", 
-      linkedIn: "https://www.linkedin.com/in/jennifer-r/",
-      bio: "Advocates for international patients' rights and improved healthcare accessibility.",
-      image: "/assets/placeholder.svg"
+      image: "/assets/Esther.jpg"
     },
     { 
       name: "Laura Montes", 
-      role: "Marketing Officer", 
+      role: "Marketer", 
       linkedIn: "https://www.linkedin.com/in/laura-montes/",
       bio: "Creates engaging healthcare content to educate the international community.",
-      image: "/assets/Lau.jpeg"
+      image: "/assets/Lau.jpg"
     },
     { 
-      name: "Soondo Mutewa", 
-      role: "Technology Officer(Developer)", 
+      name: "Soondo Roberts", 
+      role: "Head of Technology", 
       linkedIn: "https://www.linkedin.com/in/soondo-mutewa/",
       bio: "Researches healthcare trends and needs of foreign residents in Korea.",
       image: "/assets/Soondo.jpg"
@@ -206,7 +192,7 @@ const Index = () => {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: isMobile ? 200 : 100,
         duration: isMobile ? 0.3 : 0.6
       }
@@ -289,11 +275,29 @@ const Index = () => {
    <motion.div 
      key={value.title}
      className="text-center group p-5 rounded-xl bg-white hover:bg-white/90 shadow-sm transition-colors touch-manipulation"
-     variants={itemVariants}
-     whileHover={!prefersReducedMotion ? mobileHover : {}}
+     variants={{
+       hidden: { y: 20, opacity: 0 },
+       visible: { 
+         y: 0, 
+         opacity: 1,
+         transition: {
+           type: "spring",
+           stiffness: 100,
+           duration: 0.5
+         }
+       }
+     }}
+     whileHover={!prefersReducedMotion ? {
+       scale: 1.05,
+       y: -5,
+       transition: {
+         type: "spring",
+         stiffness: 200
+       }
+     } : {}}
      whileTap={isTouch ? { scale: 0.98 } : {}}
      whileInView={{ 
-       opacity: 1, 
+       opacity: 1,
        y: 0,
        scale: 1
      }}
@@ -343,8 +347,7 @@ const Index = () => {
               <span className="bg-clip-text text-transparent bg-gradient-logo">The Team Behind K-are</span>
             </h2>
             <p className="text-base sm:text-lg text-kare-700 max-w-3xl mx-auto px-2">
-              We're a passionate team of healthcare professionals, developers, and expats 
-              who understand the challenges of navigating Korean healthcare firsthand.
+              We're a driven group of passionate individuals and expats: like you! We're on a mission to make life in Korea easier for foreigners. We've experienced the challenges firsthand and are committed to building solutions that truly help people feel at home in Korea.
             </p>
           </motion.div>
           
@@ -507,9 +510,14 @@ const Index = () => {
                 key={i} 
                 className="border border-gray-200 rounded-lg sm:rounded-xl overflow-hidden hover:shadow-md transition-shadow"
                 variants={itemVariants}
-                whileInView={{ opacity: 1, x: 0 }}
-                initial={{ opacity: 0, x: 0 }}
-                transition={{ duration: isMobile ? 0.3 : 0.5, delay: i * (isMobile ? 0.05 : 0.1) }}
+                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: isMobile ? 200 : 100,
+                  duration: isMobile ? 0.3 : 0.6,
+                  delay: i * (isMobile ? 0.05 : 0.1)
+                }}
                 viewport={{ once: true }}
                 whileHover={!isTouch ? { scale: 1.01 } : {}}
               >
@@ -550,25 +558,7 @@ const Index = () => {
             ))}
           </motion.div>
           
-          <motion.div 
-            className="text-center mt-6 sm:mt-8"
-            whileInView={{ opacity: 1, y: 0 }}
-            initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
-            transition={{ duration: isMobile ? 0.4 : 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-kare-600 mb-4 px-2">
-              Have more questions? We're here to help!
-            </p>
-            <motion.a 
-              href="/contact" 
-              className="inline-flex items-center bg-gradient-to-r from-kare-600 to-teal-500 hover:from-kare-700 hover:to-teal-600 text-white px-6 py-3 rounded-lg font-medium transition-colors touch-manipulation min-h-[48px]"
-              whileHover={!isTouch ? { scale: 1.05 } : {}}
-              whileTap={{ scale: 0.95 }}
-            >
-              Contact Us
-            </motion.a>
-          </motion.div>
+
         </motion.section>
         
         {/* Contact Form Section */}

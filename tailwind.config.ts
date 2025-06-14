@@ -151,6 +151,7 @@ export default {
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
 				serif: ['Playfair Display', 'serif'],
+				header: ['"Century Gothic"', 'CenturyGothic', 'AppleGothic', 'sans-serif'],
 			},
 			backgroundImage: {
 				'gradient-logo': 'linear-gradient(90deg, #324bbb 0%, #5986f6 50%, #b3e8ec 100%)',

@@ -24,7 +24,7 @@ interface ContactFormProps {
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({ 
-  recipientEmail = "contact@k-are.org" 
+  recipientEmail = "karekoreahealth@gmail.com" 
 }) => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -70,9 +70,8 @@ useEffect(() => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    // Sanitize input on change
-    const sanitizedValue = sanitizeInput(value);
-    setFormData((prev) => ({ ...prev, [name]: sanitizedValue }));
+    // Don't sanitize during typing - only sanitize on form submission
+    setFormData((prev) => ({ ...prev, [name]: value }));
     
     // Clear error when user starts typing
     if (formErrors[name as keyof FormErrors]) {

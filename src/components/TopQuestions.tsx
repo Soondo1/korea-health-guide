@@ -38,7 +38,7 @@ export default function TopQuestions() {
               type="button"
               className="flex justify-between items-center w-full text-left cursor-pointer group p-3 focus:outline-none focus:ring-2 focus:ring-kare-200 rounded-lg"
               onClick={() => toggleQuestion(index)}
-              aria-expanded={openIndex === index ? "true" : "false"}
+              aria-expanded={openIndex === index}
             >
               <span className={`font-medium ${openIndex === index ? 'text-kare-800' : 'text-gray-800'} group-hover:text-kare-700 text-sm sm:text-base`}>
                 {faq.question}

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Instagram, Linkedin, Mail, MapPin, CalendarDays, FileText, Heart, Info } from 'lucide-react';
+import { Instagram, Linkedin, Mail, MapPin, CalendarDays, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Footer = () => {
@@ -20,7 +20,7 @@ const Footer = () => {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100
       }
     }
@@ -88,55 +88,7 @@ const Footer = () => {
             </motion.div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-            <motion.div variants={itemVariants}>
-              <h3 className="text-sm font-semibold text-kare-700 tracking-wider uppercase mb-4 flex items-center">
-                <FileText size={16} className="mr-2 text-teal-400" />
-                Resources
-              </h3>
-              <ul className="space-y-3 text-sm">
-                <motion.li whileHover="hover" initial="initial">
-                  <motion.div variants={linkVariants}>
-                    <Link to="/guide" className="text-kare-600 hover:text-teal-400 transition-colors">Healthcare Guides</Link>
-                  </motion.div>
-                </motion.li>
-                <motion.li whileHover="hover" initial="initial">
-                  <motion.div variants={linkVariants}>
-                    <Link to="/articles" className="text-kare-600 hover:text-teal-400 transition-colors">Articles</Link>
-                  </motion.div>
-                </motion.li>
-                <motion.li whileHover="hover" initial="initial">
-                  <motion.div variants={linkVariants}>
-                    <Link to="/calendar" className="text-kare-600 hover:text-teal-400 transition-colors">Korea Calendar</Link>
-                  </motion.div>
-                </motion.li>
-              </ul>
-            </motion.div>
-            
-            <motion.div variants={itemVariants}>
-              <h3 className="text-sm font-semibold text-kare-700 tracking-wider uppercase mb-4 flex items-center">
-                <Heart size={16} className="mr-2 text-teal-400" />
-                Community
-              </h3>
-              <ul className="space-y-3 text-sm">
-                <motion.li whileHover="hover" initial="initial">
-                  <motion.div variants={linkVariants}>
-                    <Link to="/bulletin-board" className="text-kare-600 hover:text-teal-400 transition-colors">Bulletin Board</Link>
-                  </motion.div>
-                </motion.li>
-                <motion.li whileHover="hover" initial="initial">
-                  <motion.div variants={linkVariants}>
-                    <Link to="/articles" className="text-kare-600 hover:text-teal-400 transition-colors">Health Stories</Link>
-                  </motion.div>
-                </motion.li>
-                <motion.li whileHover="hover" initial="initial">
-                  <motion.div variants={linkVariants}>
-                    <Link to="/guide" className="text-kare-600 hover:text-teal-400 transition-colors">Expat Resources</Link>
-                  </motion.div>
-                </motion.li>
-              </ul>
-            </motion.div>
-            
+          <div>
             <motion.div variants={itemVariants}>
               <h3 className="text-sm font-semibold text-kare-700 tracking-wider uppercase mb-4 flex items-center">
                 <Info size={16} className="mr-2 text-teal-400" />
@@ -177,8 +129,8 @@ const Footer = () => {
             </div>
             <div className="flex items-center text-kare-600 text-sm">
               <Mail size={16} className="mr-2 text-teal-400" />
-              <a href="mailto:contact@k-are.com" className="hover:text-teal-400 transition-colors">
-                contact@k-are.com
+              <a href="mailto:karekoreahealth@gmail.com" className="hover:text-teal-400 transition-colors">
+                karekoreahealth@gmail.com
               </a>
             </div>
             <div className="flex items-center text-kare-600 text-sm">
@@ -211,7 +163,7 @@ const Footer = () => {
             </motion.a>
             <motion.a 
               whileHover={{ y: -3 }}
-              href="mailto:contact@k-are.com" 
+              href="mailto:karekoreahealth@gmail.com" 
               className="text-kare-600 hover:text-teal-400 text-sm transition-colors"
             >
               Email

@@ -4,6 +4,9 @@
  * to ensure the application works even when .env is not properly loaded
  */
 
+// Environment
+export const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT || 'development';
+
 // Sanity configuration
 export const SANITY_CONFIG = {
   projectId:
@@ -20,9 +23,6 @@ export const SANITY_CONFIG = {
 export const NEWS_API_CONFIG = {
   apiKey: import.meta.env.VITE_NEWS_API_KEY || '',
 };
-
-// Environment
-export const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT || 'development';
 
 // Log configuration for debugging
 if (ENVIRONMENT === 'development') {

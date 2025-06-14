@@ -267,30 +267,13 @@ const Contact = () => {
                   <Mail className="h-5 w-5 text-kare-600 mt-1 mr-3" />
                   <div>
                     <p className="font-medium">Email</p>
-                    <a href="mailto:contact@k-are.org" className="text-kare-600 hover:underline">
-                      contact@k-are.org
+                    <a href="mailto:karekoreahealth@gmail.com" className="text-kare-600 hover:underline">
+                      karekoreahealth@gmail.com
                     </a>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <Phone className="h-5 w-5 text-kare-600 mt-1 mr-3" />
-                  <div>
-                    <p className="font-medium">Phone</p>
-                    <p>+82-2-123-4567</p>
-                    <p className="text-sm text-gray-500">Mon-Fri, 9AM-6PM KST</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <MapPin className="h-5 w-5 text-kare-600 mt-1 mr-3" />
-                  <div>
-                    <p className="font-medium">Address</p>
-                    <p>123 Sejong-daero</p>
-                    <p>Jongno-gu, Seoul</p>
-                    <p>South Korea</p>
-                  </div>
-                </div>
+
               </div>
               
               <div className="mt-8">

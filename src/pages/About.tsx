@@ -25,57 +25,43 @@ const About = () => {
 
   const teamMembers = [
     { 
-      name: "Shangbiao (Alex) Hong", 
-      role: "Founder & CEO", 
+      name: "Alex Hong", 
+      role: "Founder and CEO", 
       image: "/assets/Alex.jpeg",
       linkedIn: "https://www.linkedin.com/in/shangbiao-hong/",
       bio: ""
     },
     { 
       name: "Jayda Cez Lim", 
-      role: "CFO & Marketing Director", 
+      role: "Chief Marketer", 
       image: "/assets/Jayda.jpeg",
       linkedIn: "https://www.linkedin.com/in/jayda-cez-lim/",
       bio: ""
     },
     { 
-      name: "Ryan Tan Cher", 
-      role: "Operations Director", 
-      image: "/assets/Ryan.jpeg",
-      linkedIn: "https://www.linkedin.com/in/ryan-tan-cher/",
-      bio: ""
-    },
-    { 
       name: "Colleen Chapco", 
-      role: "Advisor & Researcher", 
+      role: "Consultant", 
       image: "/assets/Collean.jpeg",
       linkedIn: "https://www.linkedin.com/in/colleen-chapco/",
       bio: ""
     },
     { 
       name: "Esther Adjoa Boni", 
-      role: "Research Analyst", 
-      image: "/assets/Esther.jpeg",
+      role: "Researcher", 
+      image: "/assets/Esther.jpg",
       linkedIn: "https://www.linkedin.com/in/estheradjoaboni/",
       bio: ""
     },
     { 
-      name: "Jennifer R.", 
-      role: "Operations Team", 
-      image: "/assets/placeholder.svg",
-      linkedIn: "https://www.linkedin.com/in/jennifer-r/",
-      bio: ""
-    },
-    { 
       name: "Laura Montes", 
-      role: "Content Creator & Marketing", 
-      image: "/assets/Lau.jpeg",
+      role: "Marketer", 
+      image: "/assets/Lau.jpg",
       linkedIn: "https://www.linkedin.com/in/laura-montes/",
       bio: ""
     },
     { 
-      name: "Soondo Innocent Mutewa", 
-      role: "Tech Lead", 
+      name: "Soondo Roberts", 
+      role: "Head of Technology", 
       image: "/assets/Soondo.jpg",
       linkedIn: "https://www.linkedin.com/in/soondo-mutewa/",
       bio: ""
@@ -230,7 +216,7 @@ const About = () => {
               </h2>
               
               <p className="text-lg text-kare-700 mb-8">
-                K-are is run by a passionate team of expats and Koreans who have experienced the healthcare 
+                K-are is run by a passionate team of expats who have experienced the healthcare 
                 system from different perspectives. Our contributors come from diverse backgrounds to provide
                 comprehensive support and information.
               </p>
@@ -292,9 +278,7 @@ const About = () => {
                   className="grid grid-cols-1 md:grid-cols-2 gap-3"
                 >
                   {[
-                    "Healthcare professionals with experience treating international patients",
                     "Long-term foreign residents who have navigated the system extensively",
-                    "Translators specializing in medical terminology",
                     "Community volunteers who help gather and verify information"
                   ].map((item, idx) => (
                     <motion.li 
@@ -429,7 +413,7 @@ const About = () => {
                     icon: <Mail size={28} />,
                     title: "Email",
                     description: "Questions, feedback, or want to contribute?",
-                    link: "mailto:contact@k-are.org",
+                    link: "mailto:karekoreahealth@gmail.com",
                     linkText: "Send us an Email",
                     color: "bg-gradient-to-r from-kare-600 to-teal-500"
                   }
