@@ -94,16 +94,10 @@ useEffect(() => {
             >
               <Link
                 to="/about"
-                className="group bg-yellow-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="group bg-yellow-500 text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 About Us
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/guide?tab=hospitals"
-                className="bg-kare-700/30 backdrop-blur-sm border border-kare-300/20 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-kare-700/50 transition-all duration-300 flex items-center justify-center"
-              >
-                Find Healthcare
               </Link>
             </motion.div>
           </motion.div>
@@ -172,13 +166,22 @@ useEffect(() => {
             
             {/* Read More button */}
             <div className="flex justify-center mt-4">
-              <Link
-                to="/articles"
-                className="bg-white/10 backdrop-blur-sm text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 flex items-center justify-center"
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05,
+                  y: -2
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                Read More
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+                <Link
+                  to="/articles"
+                  className="group bg-white/10 backdrop-blur-sm text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/25 hover:shadow-lg hover:shadow-white/10 transition-all duration-300 flex items-center justify-center border border-white/20 hover:border-white/40 cursor-pointer"
+                >
+                  Read More
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </Link>
+              </motion.div>
             </div>
           </motion.div>
         </div>

@@ -35,14 +35,14 @@ const About = () => {
       name: "Jayda Cez Lim", 
       role: "Chief Marketer", 
       image: "/assets/Jayda.jpeg",
-      linkedIn: "https://www.linkedin.com/in/jayda-cez-lim/",
+      linkedIn: "https://www.linkedin.com/in/jaydacezlim/",
       bio: ""
     },
     { 
       name: "Colleen Chapco", 
       role: "Consultant", 
       image: "/assets/Collean.jpeg",
-      linkedIn: "https://www.linkedin.com/in/colleen-chapco/",
+      linkedIn: "https://www.linkedin.com/in/colleenchapco/",
       bio: ""
     },
     { 
@@ -56,14 +56,14 @@ const About = () => {
       name: "Laura Montes", 
       role: "Marketer", 
       image: "/assets/Lau.jpg",
-      linkedIn: "https://www.linkedin.com/in/laura-montes/",
+      linkedIn: "https://www.linkedin.com/in/laura-montes-71b398201/",
       bio: ""
     },
     { 
       name: "Soondo Roberts", 
       role: "Head of Technology", 
       image: "/assets/Soondo.jpg",
-      linkedIn: "https://www.linkedin.com/in/soondo-mutewa/",
+      linkedIn: "https://www.linkedin.com/in/soondo-mutewa-46721a210/",
       bio: ""
     }
   ];

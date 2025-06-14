@@ -60,14 +60,14 @@ const Index = () => {
     { 
       name: "Jayda Cez Lim", 
       role: "Chief Marketer", 
-      linkedIn: "https://www.linkedin.com/in/jayda-cez-lim/",
+      linkedIn: "https://www.linkedin.com/in/jaydacezlim/",
       bio: "Specializes in helping patients connect with the right healthcare providers in Korea.",
       image: "/assets/Jayda.jpeg"
     },
     { 
       name: "Colleen Chapco", 
       role: "Consultant", 
-      linkedIn: "https://www.linkedin.com/in/colleen-chapco/",
+      linkedIn: "https://www.linkedin.com/in/colleenchapco/",
       bio: "Connecting with international communities to understand their healthcare needs.",
       image: "/assets/Collean.jpeg"
     },
@@ -81,14 +81,14 @@ const Index = () => {
     { 
       name: "Laura Montes", 
       role: "Marketer", 
-      linkedIn: "https://www.linkedin.com/in/laura-montes/",
+      linkedIn: "https://www.linkedin.com/in/laura-montes-71b398201/",
       bio: "Creates engaging healthcare content to educate the international community.",
       image: "/assets/Lau.jpg"
     },
     { 
       name: "Soondo Roberts", 
       role: "Head of Technology", 
-      linkedIn: "https://www.linkedin.com/in/soondo-mutewa/",
+      linkedIn: "https://www.linkedin.com/in/soondo-mutewa-46721a210/",
       bio: "Researches healthcare trends and needs of foreign residents in Korea.",
       image: "/assets/Soondo.jpg"
     }
