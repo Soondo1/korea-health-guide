@@ -400,9 +400,7 @@ const Index = () => {
             viewport={{ once: true }}
           >
             <blockquote className="text-lg sm:text-xl text-kare-800 font-medium italic mb-3 sm:mb-4 leading-relaxed">
-              "We created K-are because we experienced firsthand how difficult it can be to navigate 
-              healthcare as a foreigner in Korea. Our vision is a community where no one feels lost 
-              or alone when seeking medical help."
+              "Life in Korea doesn't have to be hard. Get to know K-are and take the first step towards an easier life!"
             </blockquote>
             <cite className="text-teal-500 font-semibold">— Shangbiao (Alex) Hong, Founder & CEO</cite>
           </motion.div>

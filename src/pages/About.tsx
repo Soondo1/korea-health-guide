@@ -157,9 +157,7 @@ const About = () => {
                 className="my-10 bg-gradient-to-r from-kare-50 to-teal-50 rounded-xl p-8 border-l-4 border-teal-400 shadow-sm"
               >
                 <blockquote className="italic text-xl text-kare-700 leading-relaxed">
-                  "We created K-are because we experienced firsthand how difficult it can be to navigate 
-                  healthcare as a foreigner in Korea. Our vision is a community where no one feels lost 
-                  or alone when seeking medical help."
+                  "Life in Korea doesn't have to be hard. Get to know K-are and take the first step towards an easier life!"
                 </blockquote>
                 <p className="text-right mt-4 font-medium text-teal-500">— Shangbiao (Alex) Hong, Founder & CEO</p>
               </motion.div>

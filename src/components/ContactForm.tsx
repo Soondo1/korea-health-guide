@@ -137,7 +137,7 @@ useEffect(() => {
     setIsSubmitting(true);
     
     try {
-      // Final sanitization before sending - use individual sanitization instead of generic sanitizeFormData
+      // Sanitize form data before submission
       const sanitizedData = {
         name: sanitizeInput(formData.name),
         surname: sanitizeInput(formData.surname),
@@ -145,27 +145,34 @@ useEffect(() => {
         message: sanitizeInput(formData.message)
       };
       
-      // In a real implementation, you would send the sanitized form data to a backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Create form data for Netlify Forms submission
+      const formElement = e.target as HTMLFormElement;
+      const netlifyFormData = new FormData(formElement);
       
-      // Add CSRF token to headers for API requests
-      const headers = addCsrfHeader({
-        'Content-Type': 'application/json'
+      // Update form data with sanitized values
+      netlifyFormData.set('name', sanitizedData.name);
+      netlifyFormData.set('surname', sanitizedData.surname);
+      netlifyFormData.set('email', sanitizedData.email);
+      netlifyFormData.set('message', sanitizedData.message);
+      
+      // Submit to Netlify
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(netlifyFormData as any).toString()
       });
       
-      // Email could be sent here using a service like EmailJS, Nodemailer, etc.
-      console.log(`Sending email to: ${recipientEmail}`);
-      console.log('Sanitized form data:', sanitizedData);
-      console.log('Request headers with CSRF token:', headers);
-      
-      setSubmitStatus("success");
-      setFormData({ name: "", surname: "", email: "", message: "" });
-      
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
+      if (response.ok) {
+        setSubmitStatus("success");
+        setFormData({ name: "", surname: "", email: "", message: "" });
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setSubmitStatus(null);
+        }, 5000);
+      } else {
+        throw new Error('Form submission failed');
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       setSubmitStatus("error");
@@ -222,12 +229,18 @@ useEffect(() => {
       </motion.div>
       
       <motion.form
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
         onSubmit={handleSubmit}
         className="max-w-xl mx-auto"
         variants={containerVariants}
       >
-        {/* Hidden CSRF token input */}
-        <input type="hidden" name="_csrf" value={csrfToken} />
+        {/* Hidden inputs for Netlify Forms */}
+        <input type="hidden" name="form-name" value="contact" />
+        <input type="hidden" name="bot-field" />
+        <input type="hidden" name="_subject" value={`New Contact Form Submission from ${formData.name} ${formData.surname}`} />
         
         <div className="space-y-5">
           <motion.div variants={itemVariants}>
