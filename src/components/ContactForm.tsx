@@ -145,22 +145,29 @@ useEffect(() => {
         message: sanitizeInput(formData.message)
       };
       
-      // Create URLSearchParams for Netlify Forms submission
-      const formParams = new URLSearchParams();
-      formParams.append('form-name', 'contact');
-      formParams.append('bot-field', ''); // Honeypot field should be empty
-      formParams.append('name', sanitizedData.name);
-      formParams.append('surname', sanitizedData.surname);
-      formParams.append('email', sanitizedData.email);
-      formParams.append('message', sanitizedData.message);
-      
+      // Production mode: actual Netlify Forms submission
+      const encode = (data: Record<string, string>) => {
+        return Object.keys(data)
+          .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+          .join("&");
+      };
+
+      const submitData = {
+        "form-name": "contact",
+        "bot-field": "",
+        name: sanitizedData.name,
+        surname: sanitizedData.surname,
+        email: sanitizedData.email,
+        message: sanitizedData.message,
+      };
+
       // Submit to Netlify
-      const response = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: formParams.toString()
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode(submitData),
       });
-      
+
       if (response.ok) {
         setSubmitStatus("success");
         setFormData({ name: "", surname: "", email: "", message: "" });
@@ -170,7 +177,7 @@ useEffect(() => {
           setSubmitStatus(null);
         }, 5000);
       } else {
-        throw new Error('Form submission failed');
+        throw new Error(`Form submission failed with status: ${response.status}`);
       }
     } catch (error) {
       console.error("Error submitting form:", error);

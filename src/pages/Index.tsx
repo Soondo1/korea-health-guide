@@ -86,7 +86,7 @@ const Index = () => {
       image: "/assets/Lau.jpg"
     },
     { 
-      name: "Soondo Roberts", 
+      name: "Soondo Mutewa", 
       role: "Head of Technology", 
       linkedIn: "https://www.linkedin.com/in/soondo-mutewa-46721a210/",
       bio: "Researches healthcare trends and needs of foreign residents in Korea.",
@@ -258,11 +258,6 @@ const Index = () => {
                 foreigners navigate the Korean healthcare system with ease. It provides trusted, 
                 high-quality healthcare information and services designed to overcome language 
                 barriers and make healthcare more accessible for expatriates living in Korea.
-              </p>
-              <p>
-                K-are aims to be a reliable companion for foreigners, ensuring they have the support 
-                needed to access quality healthcare and live a more convenient, stress-free life in 
-                Korea.
               </p>
             </motion.div>
           </motion.div>

@@ -60,7 +60,7 @@ const About = () => {
       bio: ""
     },
     { 
-      name: "Soondo Roberts", 
+      name: "Soondo Mutewa", 
       role: "Head of Technology", 
       image: "/assets/Soondo.jpg",
       linkedIn: "https://www.linkedin.com/in/soondo-mutewa-46721a210/",
