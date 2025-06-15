@@ -145,21 +145,20 @@ useEffect(() => {
         message: sanitizeInput(formData.message)
       };
       
-      // Create form data for Netlify Forms submission
-      const formElement = e.target as HTMLFormElement;
-      const netlifyFormData = new FormData(formElement);
-      
-      // Update form data with sanitized values
-      netlifyFormData.set('name', sanitizedData.name);
-      netlifyFormData.set('surname', sanitizedData.surname);
-      netlifyFormData.set('email', sanitizedData.email);
-      netlifyFormData.set('message', sanitizedData.message);
+      // Create URLSearchParams for Netlify Forms submission
+      const formParams = new URLSearchParams();
+      formParams.append('form-name', 'contact');
+      formParams.append('bot-field', ''); // Honeypot field should be empty
+      formParams.append('name', sanitizedData.name);
+      formParams.append('surname', sanitizedData.surname);
+      formParams.append('email', sanitizedData.email);
+      formParams.append('message', sanitizedData.message);
       
       // Submit to Netlify
       const response = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(netlifyFormData as any).toString()
+        body: formParams.toString()
       });
       
       if (response.ok) {
@@ -239,7 +238,11 @@ useEffect(() => {
       >
         {/* Hidden inputs for Netlify Forms */}
         <input type="hidden" name="form-name" value="contact" />
-        <input type="hidden" name="bot-field" />
+        <div style={{ display: 'none' }}>
+          <label>
+            Don't fill this out if you're human: <input name="bot-field" />
+          </label>
+        </div>
         <input type="hidden" name="_subject" value={`New Contact Form Submission from ${formData.name} ${formData.surname}`} />
         
         <div className="space-y-5">
