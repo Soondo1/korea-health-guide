@@ -4,9 +4,10 @@ import DOMPurify from 'isomorphic-dompurify'; // works on both server & client
  * Sanitizes user input to prevent XSS attacks
  * @param input The user input to sanitize
  * @param maxLength Optional maximum length for the input
+ * @param preserveSpaces Whether to preserve internal spaces (default: true)
  * @returns Sanitized string
  */
-export function sanitizeInput(input: string, maxLength: number = 1000): string {
+export function sanitizeInput(input: string, maxLength: number = 1000, preserveSpaces: boolean = true): string {
   if (!input) return '';
   
   // Convert to string in case a number or other type is passed
@@ -18,19 +19,50 @@ export function sanitizeInput(input: string, maxLength: number = 1000): string {
     ALLOWED_ATTR: [], // Don't allow any HTML attributes
   });
   
-  // Trim and limit length
-  return sanitized.trim().slice(0, maxLength);
+  // If preserveSpaces is true, only trim leading/trailing whitespace
+  // Otherwise, use the old behavior
+  if (preserveSpaces) {
+    return sanitized.slice(0, maxLength);
+  } else {
+    return sanitized.trim().slice(0, maxLength);
+  }
 }
 
 /**
- * Validates an email address
+ * Validates an email address with enhanced criteria
  * @param email The email address to validate
  * @returns Boolean indicating if the email is valid
  */
 export function validateEmail(email: string): boolean {
-  // Use a regular expression for basic email validation
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
+  // Use a more comprehensive regular expression for email validation
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  
+  // Basic format check
+  if (!emailRegex.test(email)) {
+    return false;
+  }
+  
+  // Additional checks for common issues
+  const trimmedEmail = email.trim();
+  
+  // Check for minimum and maximum length
+  if (trimmedEmail.length < 5 || trimmedEmail.length > 100) {
+    return false;
+  }
+  
+  // Check for consecutive dots
+  if (trimmedEmail.includes('..')) {
+    return false;
+  }
+  
+  // Check for valid TLD (at least 2 characters)
+  const parts = trimmedEmail.split('.');
+  const tld = parts[parts.length - 1];
+  if (tld.length < 2) {
+    return false;
+  }
+  
+  return true;
 }
 
 /**

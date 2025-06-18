@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Send, Mail, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { Send, Mail, AlertCircle, Clock, CheckCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { sanitizeInput, validateField } from "@/lib/inputSecurity";
-import { generateCsrfToken, addCsrfHeader } from "@/lib/csrfProtection";
+import { generateCsrfToken } from "@/lib/csrfProtection";
 import { createRateLimiter, formatTimeRemaining } from "@/lib/rateLimiting";
 
 interface FormData {
@@ -17,11 +17,22 @@ interface FormErrors {
   surname?: string;
   email?: string;
   message?: string;
+  submit?: string;
 }
 
 interface ContactFormProps {
   recipientEmail?: string;
 }
+
+// Enhanced rate limiting with session persistence
+const RATE_LIMIT_CONFIG = {
+  maxRequests: 3,
+  timeWindow: 5 * 60 * 1000, // 5 minutes
+  storageKey: 'kare_contact_form_rate_limit'
+};
+
+// Network timeout configuration
+const NETWORK_TIMEOUT = 10000; // 10 seconds
 
 const ContactForm: React.FC<ContactFormProps> = ({ 
   recipientEmail = "karekoreahealth@gmail.com" 
@@ -34,23 +45,16 @@ const ContactForm: React.FC<ContactFormProps> = ({
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
-const [isMobile, setIsMobile] = useState(false);
-const [isTouch,  setIsTouch]  = useState(false);
-
-useEffect(() => {
-  setIsMobile(window.innerWidth < 768);
-  setIsTouch('ontouchstart' in window);
-}, []);
+  const [submitStatus, setSubmitStatus] = useState<"success" | "error" | "timeout" | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string>("");
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
   
-  // Create rate limiter with a maximum of 3 form submissions in 5 minutes
-  const checkRateLimit = useCallback(createRateLimiter({
-    maxRequests: 3,
-    timeWindow: 5 * 60 * 1000, // 5 minutes
-    storageKey: 'contact_form_rate_limit'
-  }), []);
+  // Enhanced rate limiter with better configuration
+  const checkRateLimit = useCallback(createRateLimiter(RATE_LIMIT_CONFIG), []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -59,8 +63,13 @@ useEffect(() => {
     };
     
     // Generate CSRF token when component mounts
-    const token = generateCsrfToken();
-    setCsrfToken(token);
+    try {
+      const token = generateCsrfToken();
+      setCsrfToken(token);
+    } catch (error) {
+      // Handle CSRF token generation error gracefully
+      console.warn("Failed to generate CSRF token, proceeding without it");
+    }
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
@@ -68,44 +77,36 @@ useEffect(() => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    // Don't sanitize during typing - only sanitize on form submission
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
-    if (formErrors[name as keyof FormErrors]) {
-      setFormErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name as keyof FormErrors];
-        return newErrors;
-      });
-    }
-  };
-  
+  // Enhanced form validation with better error messages
   const validateForm = (): boolean => {
     const errors: FormErrors = {};
     
-    // Validate name (2-50 characters)
-    const nameValidation = validateField(formData.name, 'text', true, 2, 50);
+    // Validate name with improved criteria
+    const nameValidation = validateField(formData.name.trim(), 'text', true, 2, 50);
     if (!nameValidation.isValid) {
       errors.name = nameValidation.errorMessage;
+    } else if (!/^[a-zA-Z\s\-'\.]+$/.test(formData.name.trim())) {
+      errors.name = "Name can only contain letters, spaces, hyphens, apostrophes, and periods";
     }
     
-    // Validate surname (2-50 characters)
-    const surnameValidation = validateField(formData.surname, 'text', true, 2, 50);
+    // Validate surname with improved criteria
+    const surnameValidation = validateField(formData.surname.trim(), 'text', true, 2, 50);
     if (!surnameValidation.isValid) {
       errors.surname = surnameValidation.errorMessage;
+    } else if (!/^[a-zA-Z\s\-'\.]+$/.test(formData.surname.trim())) {
+      errors.surname = "Surname can only contain letters, spaces, hyphens, apostrophes, and periods";
     }
     
-    // Validate email
-    const emailValidation = validateField(formData.email, 'email', true);
+    // Enhanced email validation
+    const emailValidation = validateField(formData.email.trim(), 'email', true);
     if (!emailValidation.isValid) {
       errors.email = emailValidation.errorMessage;
+    } else if (formData.email.trim().length > 100) {
+      errors.email = "Email address is too long";
     }
     
-    // Validate message (10-1000 characters)
-    const messageValidation = validateField(formData.message, 'message', true, 10, 1000);
+    // Enhanced message validation
+    const messageValidation = validateField(formData.message.trim(), 'message', true, 10, 1000);
     if (!messageValidation.isValid) {
       errors.message = messageValidation.errorMessage;
     }
@@ -114,38 +115,105 @@ useEffect(() => {
     return Object.keys(errors).length === 0;
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    
+    // Debug logging to see what's happening with the input
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Input change for ${name}:`, {
+        originalValue: value,
+        hasSpaces: value.includes(' '),
+        length: value.length
+      });
+    }
+    
+    // Set the form data exactly as typed - no processing during input
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear specific field error when user starts typing
+    if (formErrors[name as keyof FormErrors]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name as keyof FormErrors];
+        return newErrors;
+      });
+    }
+    
+    // Clear submit error when user makes changes
+    if (formErrors.submit) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.submit;
+        return newErrors;
+      });
+    }
+  };
+
+  // Enhanced network request with timeout and retry logic
+  const submitWithTimeout = async (url: string, options: RequestInit): Promise<Response> => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), NETWORK_TIMEOUT);
+    
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Request timeout - please check your internet connection and try again');
+      }
+      throw error;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clear previous errors
+    setFormErrors({});
+    setRateLimitError(null);
     
     // Validate form before submission
     if (!validateForm()) {
       return;
     }
     
-    // Check rate limit before processing
-    const rateLimitResult = checkRateLimit();
-    if (!rateLimitResult.allowed) {
-      const resetTimeMs = rateLimitResult.resetTime ? rateLimitResult.resetTime - Date.now() : 0;
-      const timeRemaining = formatTimeRemaining(resetTimeMs);
-      setRateLimitError(`Too many requests. Please try again in ${timeRemaining}.`);
-      return;
+    // Enhanced rate limit check with better error handling
+    try {
+      const rateLimitResult = checkRateLimit();
+      if (!rateLimitResult.allowed) {
+        const resetTimeMs = rateLimitResult.resetTime ? rateLimitResult.resetTime - Date.now() : 0;
+        const timeRemaining = formatTimeRemaining(Math.max(0, resetTimeMs));
+        setRateLimitError(`Too many submissions. Please wait ${timeRemaining} before trying again.`);
+        return;
+      }
+    } catch (error) {
+      // If rate limiting fails, allow submission but log the issue
+      console.warn("Rate limiting check failed, allowing submission");
     }
     
-    // Clear any rate limit errors
-    setRateLimitError(null);
-    
     setIsSubmitting(true);
+    setSubmitStatus(null);
     
     try {
-      // Sanitize form data before submission
+      // Sanitize form data before submission (preserve internal spaces)
       const sanitizedData = {
-        name: sanitizeInput(formData.name),
-        surname: sanitizeInput(formData.surname),
-        email: sanitizeInput(formData.email),
-        message: sanitizeInput(formData.message)
+        name: sanitizeInput(formData.name, 50, true).trim(),
+        surname: sanitizeInput(formData.surname, 50, true).trim(),
+        email: sanitizeInput(formData.email, 100, true).trim(),
+        message: sanitizeInput(formData.message, 1000, true).trim()
       };
       
-      // Production mode: actual Netlify Forms submission
+      // Validate sanitized data isn't empty
+      if (!sanitizedData.name || !sanitizedData.surname || !sanitizedData.email || !sanitizedData.message) {
+        throw new Error("Invalid data after sanitization");
+      }
+      
+      // Prepare form data for Netlify
       const encode = (data: Record<string, string>) => {
         return Object.keys(data)
           .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
@@ -161,29 +229,75 @@ useEffect(() => {
         message: sanitizedData.message,
       };
 
-      // Submit to Netlify
-      const response = await fetch("/", {
+      // Submit to Netlify with timeout handling
+      const response = await submitWithTimeout("/", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: { 
+          "Content-Type": "application/x-www-form-urlencoded",
+          ...(csrfToken && { "X-CSRF-Token": csrfToken })
+        },
         body: encode(submitData),
       });
 
       if (response.ok) {
         setSubmitStatus("success");
         setFormData({ name: "", surname: "", email: "", message: "" });
+        setRetryCount(0);
         
-        // Clear success message after 5 seconds
+        // Clear success message after 8 seconds
         setTimeout(() => {
           setSubmitStatus(null);
-        }, 5000);
+        }, 8000);
       } else {
-        throw new Error(`Form submission failed with status: ${response.status}`);
+        // Handle different HTTP error codes
+        const errorText = await response.text().catch(() => '');
+        let errorMessage = `Submission failed (${response.status})`;
+        
+        if (response.status === 429) {
+          errorMessage = "Too many requests. Please wait a moment and try again.";
+        } else if (response.status >= 500) {
+          errorMessage = "Server error. Please try again in a few minutes.";
+        } else if (response.status === 413) {
+          errorMessage = "Message is too large. Please shorten your message and try again.";
+        }
+        
+        throw new Error(errorMessage);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      setSubmitStatus("error");
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      
+      if (errorMessage.includes('timeout')) {
+        setSubmitStatus("timeout");
+      } else {
+        setSubmitStatus("error");
+        setFormErrors(prev => ({ ...prev, submit: errorMessage }));
+      }
+      
+      // Don't log network errors to console in production
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Form submission error:", error);
+      }
     } finally {
       setIsSubmitting(false);
+      setIsRetrying(false);
+    }
+  };
+
+  // Retry functionality for failed submissions
+  const handleRetry = () => {
+    if (retryCount < 2) { // Allow up to 2 retries
+      setRetryCount(prev => prev + 1);
+      setIsRetrying(true);
+      setSubmitStatus(null);
+      setFormErrors({});
+      
+      // Add a small delay before retry
+      setTimeout(() => {
+        const form = document.querySelector('form[name="contact"]') as HTMLFormElement;
+        if (form) {
+          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+      }, 1000);
     }
   };
 
@@ -230,7 +344,7 @@ useEffect(() => {
           className="text-lg sm:text-xl text-kare-600 max-w-3xl mx-auto"
           variants={itemVariants}
         >
-          Have questions? Fill in the form below!
+          Have questions about Korean healthcare? We're here to help!
         </motion.p>
       </motion.div>
       
@@ -255,7 +369,7 @@ useEffect(() => {
         <div className="space-y-5">
           <motion.div variants={itemVariants}>
             <label htmlFor="name" className="block text-base font-medium text-kare-700 mb-2">
-              Name
+              First Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -265,17 +379,32 @@ useEffect(() => {
               onChange={handleChange}
               required
               maxLength={50}
-              className={`flex h-12 w-full rounded-md border ${formErrors.name ? 'border-red-500' : 'border-input'} bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
+              disabled={isSubmitting || isRetrying}
+              className={`flex h-12 w-full rounded-md border ${
+                formErrors.name ? 'border-red-500 bg-red-50' : 'border-input'
+              } bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors`}
               placeholder="Enter your first name"
+              aria-describedby={formErrors.name ? "name-error" : undefined}
             />
-            {formErrors.name && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
-            )}
+            <AnimatePresence>
+              {formErrors.name && (
+                <motion.p 
+                  id="name-error"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-1 text-sm text-red-500 flex items-center"
+                >
+                  <AlertCircle className="h-4 w-4 mr-1" />
+                  {formErrors.name}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </motion.div>
           
           <motion.div variants={itemVariants}>
             <label htmlFor="surname" className="block text-base font-medium text-kare-700 mb-2">
-              Surname
+              Last Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -285,17 +414,32 @@ useEffect(() => {
               onChange={handleChange}
               required
               maxLength={50}
-              className={`flex h-12 w-full rounded-md border ${formErrors.surname ? 'border-red-500' : 'border-input'} bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
-              placeholder="Enter your family name"
+              disabled={isSubmitting || isRetrying}
+              className={`flex h-12 w-full rounded-md border ${
+                formErrors.surname ? 'border-red-500 bg-red-50' : 'border-input'
+              } bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors`}
+              placeholder="Enter your last name"
+              aria-describedby={formErrors.surname ? "surname-error" : undefined}
             />
-            {formErrors.surname && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.surname}</p>
-            )}
+            <AnimatePresence>
+              {formErrors.surname && (
+                <motion.p 
+                  id="surname-error"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-1 text-sm text-red-500 flex items-center"
+                >
+                  <AlertCircle className="h-4 w-4 mr-1" />
+                  {formErrors.surname}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </motion.div>
           
           <motion.div variants={itemVariants}>
             <label htmlFor="email" className="block text-base font-medium text-kare-700 mb-2">
-              Email
+              Email Address <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -304,17 +448,33 @@ useEffect(() => {
               value={formData.email}
               onChange={handleChange}
               required
-              className={`flex h-12 w-full rounded-md border ${formErrors.email ? 'border-red-500' : 'border-input'} bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
+              maxLength={100}
+              disabled={isSubmitting || isRetrying}
+              className={`flex h-12 w-full rounded-md border ${
+                formErrors.email ? 'border-red-500 bg-red-50' : 'border-input'
+              } bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors`}
               placeholder="your.email@example.com"
+              aria-describedby={formErrors.email ? "email-error" : undefined}
             />
-            {formErrors.email && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
-            )}
+            <AnimatePresence>
+              {formErrors.email && (
+                <motion.p 
+                  id="email-error"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-1 text-sm text-red-500 flex items-center"
+                >
+                  <AlertCircle className="h-4 w-4 mr-1" />
+                  {formErrors.email}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </motion.div>
           
           <motion.div variants={itemVariants}>
             <label htmlFor="message" className="block text-base font-medium text-kare-700 mb-2">
-              Questions or Inquiries
+              Your Message <span className="text-red-500">*</span>
             </label>
             <textarea
               id="message"
@@ -324,69 +484,157 @@ useEffect(() => {
               required
               rows={4}
               maxLength={1000}
-              className={`flex min-h-[100px] w-full rounded-md border ${formErrors.message ? 'border-red-500' : 'border-input'} bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
-              placeholder="How can we help you with Korean healthcare? Ask your questions here..."
+              disabled={isSubmitting || isRetrying}
+              className={`flex min-h-[100px] w-full rounded-md border ${
+                formErrors.message ? 'border-red-500 bg-red-50' : 'border-input'
+              } bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kare-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors resize-vertical`}
+              placeholder="How can we help you with Korean healthcare? Please describe your question or concern..."
+              aria-describedby={formErrors.message ? "message-error" : undefined}
             />
-            {formErrors.message && (
-              <p className="mt-1 text-sm text-red-500">{formErrors.message}</p>
-            )}
+            <div className="flex justify-between items-center mt-1">
+              <AnimatePresence>
+                {formErrors.message && (
+                  <motion.p 
+                    id="message-error"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="text-sm text-red-500 flex items-center"
+                  >
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {formErrors.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+              <span className={`text-xs ${
+                formData.message.length > 900 ? 'text-red-500' : 'text-gray-500'
+              }`}>
+                {formData.message.length}/1000
+              </span>
+            </div>
           </motion.div>
           
           <motion.div variants={itemVariants} className="pt-3">
             <motion.button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full py-4 text-lg bg-gradient-to-r from-kare-600 to-teal-500 text-white rounded-md hover:from-kare-700 hover:to-teal-600 transition-colors flex items-center justify-center"
-              whileHover={!isTouch ? { scale: 1.02 } : {}}
-              whileTap={{ scale: 0.98 }}
+              disabled={isSubmitting || isRetrying}
+              className="w-full py-4 text-lg bg-gradient-to-r from-kare-600 to-teal-500 text-white rounded-md hover:from-kare-700 hover:to-teal-600 transition-all duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+              whileHover={!isTouch && !(isSubmitting || isRetrying) ? { scale: 1.02 } : {}}
+              whileTap={!(isSubmitting || isRetrying) ? { scale: 0.98 } : {}}
             >
-              {isSubmitting ? (
+              {isSubmitting || isRetrying ? (
                 <>
-                  <span className="animate-spin mr-2">⌛</span>
-                  Submitting...
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="mr-2"
+                  >
+                    <Clock className="h-5 w-5" />
+                  </motion.div>
+                  {isRetrying ? 'Retrying...' : 'Submitting...'}
                 </>
               ) : (
                 <>
-                  Submit
+                  <Send className="h-5 w-5 mr-2" />
+                  Send Message
                 </>
               )}
             </motion.button>
           </motion.div>
           
-          {submitStatus === "success" && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-md flex items-center text-base"
-            >
-              <Mail className="h-5 w-5 mr-2" />
-              Your message has been sent successfully! We'll be in touch soon.
-            </motion.div>
-          )}
+          {/* Success Message */}
+          <AnimatePresence>
+            {submitStatus === "success" && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-md flex items-center text-base"
+              >
+                <CheckCircle className="h-5 w-5 mr-3 flex-shrink-0" />
+                <div>
+                  <p className="font-medium">Message sent successfully!</p>
+                  <p className="text-sm mt-1">We'll get back to you within 24 hours.</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           
-          {submitStatus === "error" && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-md text-base"
-            >
-              There was an error sending your message. Please try again.
-            </motion.div>
-          )}
+          {/* Error Message */}
+          <AnimatePresence>
+            {submitStatus === "error" && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-md"
+              >
+                <div className="flex items-start">
+                  <AlertCircle className="h-5 w-5 mr-3 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-medium">Message could not be sent</p>
+                    {formErrors.submit && (
+                      <p className="text-sm mt-1">{formErrors.submit}</p>
+                    )}
+                    {retryCount < 2 && (
+                      <button
+                        type="button"
+                        onClick={handleRetry}
+                        className="mt-2 text-sm underline hover:no-underline focus:outline-none"
+                      >
+                        Try again
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           
-          {rateLimitError && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-md flex items-center text-base"
-            >
-              <AlertCircle className="h-5 w-5 mr-2" />
-              {rateLimitError}
-            </motion.div>
-          )}
+          {/* Timeout Message */}
+          <AnimatePresence>
+            {submitStatus === "timeout" && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-md"
+              >
+                <div className="flex items-start">
+                  <Clock className="h-5 w-5 mr-3 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-medium">Connection timeout</p>
+                    <p className="text-sm mt-1">Please check your internet connection and try again.</p>
+                    <button
+                      type="button"
+                      onClick={handleRetry}
+                      className="mt-2 text-sm underline hover:no-underline focus:outline-none"
+                    >
+                      Retry submission
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {/* Rate Limit Error */}
+          <AnimatePresence>
+            {rateLimitError && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-md flex items-center text-base"
+              >
+                <AlertCircle className="h-5 w-5 mr-3 flex-shrink-0" />
+                <div>
+                  <p className="font-medium">Too many submissions</p>
+                  <p className="text-sm mt-1">{rateLimitError}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.form>
     </motion.div>
